@@ -19,6 +19,10 @@
               glassBorder: "rgba(255, 255, 255, 0.1)",
               neonCyan: "#00f3ff",
               neonPurple: "#bc13fe",
+              primaryPurple: "#8b5cf6",
+              secondaryPink: "#ec4899",
+              accentGlow: "#a78bfa",
+              accentPink: "#f472b6",
             },
             animation: {
               'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -50,18 +54,32 @@
     </script>
     <style>
       body {
-        background-color: #0f172a;
+        background-color: #0a0a14;
         color: white;
         overflow-x: hidden;
       }
       .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
       .text-glow {
-        text-shadow: 0 0 5px rgba(0, 243, 255, 0.5), 0 0 15px rgba(188, 19, 254, 0.3);
+        text-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 0 20px rgba(236, 72, 153, 0.2);
+      }
+      @keyframes sweep {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(2deg); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-sweep {
+        animation: sweep 2s ease-in-out infinite;
       }
       /* Hide scrollbar but keep functionality */
       ::-webkit-scrollbar {
@@ -93,5 +111,6 @@
 </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

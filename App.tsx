@@ -8,9 +8,12 @@ import Skills from './views/Skills';
 import Competitions from './views/Competitions';
 import About from './views/About';
 import Contact from './views/Contact';
+import Loader from './components/Loader';
 import { SectionType } from './types';
 
 const App: React.FC = () => {
+  const [showLoader, setShowLoader] = useState(true);
+  const [isAppReady, setIsAppReady] = useState(false);
   const [currentSection, setCurrentSection] = useState<SectionType>('home');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displaySection, setDisplaySection] = useState<SectionType>('home');
@@ -52,11 +55,23 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen text-white font-sans selection:bg-neonCyan selection:text-black antialiased">
-      <Background />
+    <div className={`min-h-screen text-white font-sans selection:bg-neonCyan selection:text-black antialiased overflow-x-hidden ${!isAppReady ? 'h-screen overflow-y-hidden' : ''}`}>
+      {showLoader && (
+        <Loader 
+          onStartFadeOut={() => setIsAppReady(true)} 
+          onComplete={() => setShowLoader(false)} 
+        />
+      )}
       
-      {/* AI Assistant Floating UI - Now Context Aware */}
-      <AIChat currentSection={displaySection} />
+      <div 
+        className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] origin-center ${
+          !isAppReady ? 'scale-[1.05] opacity-0 blur-sm pointer-events-none' : 'scale-100 opacity-100 blur-0'
+        }`}
+      >
+        <Background />
+        
+        {/* AI Assistant Floating UI - Now Context Aware */}
+        <AIChat currentSection={displaySection} />
       
       <main 
         className={`transition-all duration-500 transform-gpu will-change-[opacity,transform,filter] ${
@@ -72,9 +87,10 @@ const App: React.FC = () => {
         }}
       >
         {renderSection()}
-      </main>
-
-      <Navbar currentSection={currentSection} onNavigate={handleNavigation} />
+        </main>
+  
+        <Navbar currentSection={currentSection} onNavigate={handleNavigation} />
+      </div>
     </div>
   );
 };

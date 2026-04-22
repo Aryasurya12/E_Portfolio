@@ -17,23 +17,30 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, onNavigate }) => {
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-[500px]">
-      <nav className="glass-panel rounded-full px-4 py-4 flex justify-between items-center shadow-2xl shadow-neonPurple/20">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-fit px-4">
+      <nav className="glass-panel rounded-2xl px-6 py-4 flex justify-center items-center gap-2 md:gap-4 shadow-[0_0_30px_rgba(139,92,246,0.3)] border border-white/10 backdrop-blur-2xl">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
-            className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[3rem] ${
-              currentSection === item.id ? 'text-neonCyan -translate-y-2' : 'text-gray-400 hover:text-white'
+            className={`flex flex-col items-center justify-center transition-all duration-500 relative group p-2 rounded-xl ${
+              currentSection === item.id 
+                ? 'text-white bg-primaryPurple/20 shadow-[0_0_15px_rgba(139,92,246,0.4)]' 
+                : 'text-gray-400 hover:text-accentPink hover:bg-white/5'
             }`}
           >
-            <i className={`fa-solid ${item.icon} text-lg md:text-xl mb-1 transition-transform group-hover:scale-110`}></i>
-            <span className={`text-[9px] md:text-[10px] uppercase tracking-wider font-semibold ${currentSection === item.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity absolute -bottom-4 w-max`}>
+            <div className="relative">
+              <i className={`fa-solid ${item.icon} text-lg md:text-xl transition-transform duration-500 group-hover:scale-110`}></i>
+              {currentSection === item.id && (
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-secondaryPink rounded-full shadow-[0_0_8px_#ec4899] animate-pulse"></span>
+              )}
+            </div>
+            
+            <span className={`text-[9px] uppercase tracking-widest font-black mt-1 transition-all duration-500 ${
+              currentSection === item.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden group-hover:opacity-100 group-hover:h-auto'
+            }`}>
               {item.label}
             </span>
-            {currentSection === item.id && (
-              <span className="absolute -top-2 w-1 h-1 bg-neonPurple rounded-full shadow-[0_0_10px_#bc13fe]"></span>
-            )}
           </button>
         ))}
       </nav>

@@ -93,74 +93,85 @@ const projects: Project[] = [
 
 type CategoryType = 'all' | 'mobile' | 'web' | 'desktop' | 'hardware';
 
-// --- Carousel Component ---
-const ProjectCarousel: React.FC<{ 
-  images: string[]; 
-  title: string; 
-  onImageClick?: () => void;
-}> = ({ images, title, onImageClick }) => {
-  const [curr, setCurr] = useState(0);
+const ProjectCard: React.FC<{ 
+  project: Project; 
+  index: number; 
+  onClick: () => void 
+}> = ({ project, index, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  const prev = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurr((c) => (c === 0 ? images.length - 1 : c - 1));
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    setTilt({ x: x * 10, y: y * -10 });
   };
 
-  const next = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurr((c) => (c === images.length - 1 ? 0 : c + 1));
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
   };
 
   return (
-    <div className="relative h-56 overflow-hidden group/carousel">
-      {/* Slides Container */}
-      <div 
-        className="flex transition-transform duration-500 ease-out h-full w-full" 
-        style={{ transform: `translateX(-${curr * 100}%)` }}
-      >
-        {images.map((src, i) => (
-          <div key={i} className="min-w-full h-full relative" onClick={onImageClick}>
-             <img 
-              src={src} 
-              alt={`${title} view ${i + 1}`} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover/carousel:scale-110 cursor-pointer" 
-            />
-          </div>
-        ))}
+    <div 
+      ref={cardRef}
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      className="relative glass-panel rounded-3xl overflow-hidden group cursor-pointer transition-all duration-300 border border-white/10 hover:border-accentPink animate-fade-in-up opacity-0"
+      style={{ 
+        animationDelay: `${200 + index * 100}ms`,
+        transform: isHovered ? `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.02)` : 'none',
+        boxShadow: isHovered ? '0 0 30px rgba(236, 72, 153, 0.3)' : 'none'
+      }}
+    >
+      {/* Image Overlay */}
+      <div className="relative h-60 overflow-hidden">
+        <img 
+          src={project.image} 
+          alt={project.title} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent opacity-90" />
+        
+        {/* Glow Halo behind card when hovered */}
+        <div className={`absolute -inset-10 bg-gradient-to-r from-primaryPurple/30 to-secondaryPink/30 blur-[40px] rounded-full z-0 pointer-events-none transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
       </div>
-      
-      {/* Dark Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-80 pointer-events-none"></div>
 
-      {/* Controls (Only if multiple images) */}
-      {images.length > 1 && (
-        <>
-            <button 
-                onClick={prev} 
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/80 flex items-center justify-center text-white opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10 z-20 hover:scale-110"
-                aria-label="Previous image"
-            >
-                <i className="fa-solid fa-chevron-left text-xs"></i>
-            </button>
-            <button 
-                onClick={next} 
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/80 flex items-center justify-center text-white opacity-0 group-hover/carousel:opacity-100 transition-all duration-300 backdrop-blur-sm border border-white/10 z-20 hover:scale-110"
-                aria-label="Next image"
-            >
-                <i className="fa-solid fa-chevron-right text-xs"></i>
-            </button>
+      <div className="p-6 relative z-10 flex flex-col h-full bg-gradient-to-b from-transparent to-[#0a0a14]/60">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-2xl font-bold text-white group-hover:text-accentPink transition-colors">{project.title}</h3>
+          <span className="px-3 py-1 rounded-full bg-primaryPurple/20 text-[10px] font-black uppercase text-accentGlow border border-primaryPurple/40 backdrop-blur-md">
+            {project.category}
+          </span>
+        </div>
 
-            {/* Indicators */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
-                {images.map((_, i) => (
-                    <div 
-                        key={i} 
-                        className={`w-1.5 h-1.5 rounded-full transition-all duration-300 shadow-sm ${curr === i ? 'bg-neonCyan w-4' : 'bg-white/50'}`} 
-                    />
-                ))}
-            </div>
-        </>
-      )}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {project.tags.map(tag => (
+            <span key={tag} className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-white/5 text-gray-300 border border-white/10">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-2">
+          {project.description}
+        </p>
+
+        <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+          <div className="flex -space-x-2">
+             <div className="w-8 h-8 rounded-full bg-primaryPurple/20 border border-white/10 flex items-center justify-center text-xs"><i className="fa-solid fa-code"></i></div>
+             <div className="w-8 h-8 rounded-full bg-secondaryPink/20 border border-white/10 flex items-center justify-center text-xs"><i className="fa-solid fa-brain"></i></div>
+          </div>
+          <button className="flex items-center gap-2 text-sm font-bold text-accentPink group-hover:translate-x-1 transition-transform">
+            Explore <i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -169,16 +180,6 @@ const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<CategoryType>('all');
   const [isAnimating, setIsAnimating] = useState(false);
-
-  const openModal = (project: Project) => {
-    setSelectedProject(project);
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-  };
-
-  const closeModal = () => {
-    setSelectedProject(null);
-    document.body.style.overflow = 'auto';
-  };
 
   const handleFilterChange = (category: CategoryType) => {
     if (filter === category) return;
@@ -189,40 +190,36 @@ const Projects: React.FC = () => {
     }, 300);
   };
 
-  // Cleanup overflow style on unmount
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
   const filteredProjects = projects.filter(p => filter === 'all' || p.category === filter);
 
   const categories: { id: CategoryType; label: string; icon: string }[] = [
-    { id: 'all', label: 'All Projects', icon: 'fa-layer-group' },
-    { id: 'mobile', label: 'Mobile Apps', icon: 'fa-mobile-screen' },
-    { id: 'web', label: 'Web Dev', icon: 'fa-globe' },
+    { id: 'all', label: 'All', icon: 'fa-layer-group' },
+    { id: 'mobile', label: 'Mobile', icon: 'fa-mobile-screen' },
+    { id: 'web', label: 'Web', icon: 'fa-globe' },
     { id: 'desktop', label: 'Software', icon: 'fa-desktop' },
-    { id: 'hardware', label: 'Hardware/IoT', icon: 'fa-microchip' },
+    { id: 'hardware', label: 'Hardware', icon: 'fa-microchip' },
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-32 px-4 max-w-7xl mx-auto relative z-10">
-      <h2 className="text-4xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-neonCyan to-neonPurple animate-fade-in-up">
-        Featured Projects
-      </h2>
-      <p className="text-center text-gray-400 mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>Some things I've built</p>
+    <div className="min-h-screen pt-24 pb-40 px-6 max-w-7xl mx-auto relative z-10">
+      <div className="text-center mb-16 opacity-0 animate-fade-in-up">
+        <h2 className="text-5xl md:text-6xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink">
+          System Portfolios
+        </h2>
+        <div className="w-24 h-1 bg-gradient-to-r from-primaryPurple to-secondaryPink mx-auto rounded-full" />
+        <p className="text-gray-400 mt-6 max-w-2xl mx-auto font-mono uppercase tracking-[0.2em] text-xs">Architecting high-performance digital solutions</p>
+      </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap justify-center gap-4 mb-12 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+      <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-20 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => handleFilterChange(cat.id)}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border flex items-center gap-2 ${
+            className={`px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-500 border flex items-center gap-2 ${
               filter === cat.id
-                ? 'bg-neonCyan text-black border-neonCyan shadow-[0_0_15px_rgba(0,243,255,0.4)] scale-105'
-                : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
+                ? 'bg-gradient-to-r from-primaryPurple to-secondaryPink text-white border-transparent shadow-[0_0_20px_rgba(139,92,246,0.3)] scale-105'
+                : 'bg-white/5 text-gray-400 border-white/10 hover:border-accentPink/50 hover:text-white'
             }`}
           >
             <i className={`fa-solid ${cat.icon}`}></i>
@@ -232,177 +229,92 @@ const Projects: React.FC = () => {
       </div>
 
       <div 
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-4 sm:px-0 transition-all duration-300 ${
-          isAnimating ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 transition-all duration-500 ${
+          isAnimating ? 'opacity-0 translate-y-8 scale-[0.98] blur-md' : 'opacity-100 translate-y-0 scale-100 blur-0'
         }`}
       >
         {filteredProjects.map((project, index) => (
-          <div 
+          <ProjectCard 
             key={project.id} 
-            onClick={() => openModal(project)}
-            className="glass-panel rounded-2xl overflow-hidden group hover:border-neonCyan/50 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1 hover:shadow-lg hover:shadow-neonCyan/10 cursor-pointer animate-fade-in-up opacity-0"
-            style={{ animationDelay: `${200 + index * 100}ms` }}
-          >
-            {/* Carousel Section */}
-            <ProjectCarousel 
-              images={project.gallery || [project.image]} 
-              title={project.title}
-            />
-            
-            {/* Category Badge overlay */}
-            <div className="absolute top-4 right-4 z-20 pointer-events-none">
-                <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold uppercase tracking-wider text-neonCyan shadow-lg">
-                  {project.category}
-                </span>
-            </div>
-
-            {/* Title Overlay on Image Bottom */}
-            <div className="absolute top-[11rem] left-6 right-6 z-20 pointer-events-none translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className="text-2xl font-bold text-white group-hover:text-neonCyan transition-colors drop-shadow-md">{project.title}</h3>
-            </div>
-            
-            <div className="p-6 flex-1 flex flex-col bg-gradient-to-b from-transparent to-black/20 pt-2">
-              <div className="flex flex-wrap gap-2 mb-4 mt-2">
-                {project.tags.map(tag => (
-                  <span key={tag} className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-white/5 text-neonCyan border border-white/10 shadow-sm backdrop-blur-sm">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <p className="text-gray-300 text-sm leading-relaxed mb-6 flex-1 opacity-90">
-                {project.description}
-              </p>
-              <div className="mt-auto">
-                <button 
-                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-neonCyan/30 transition-all duration-300 text-sm font-semibold flex items-center justify-center gap-2 group/btn"
-                  type="button"
-                >
-                  <span>View Details</span>
-                  <i className="fa-solid fa-arrow-right text-neonCyan group-hover/btn:translate-x-1 transition-transform"></i> 
-                </button>
-              </div>
-            </div>
-          </div>
+            project={project} 
+            index={index} 
+            onClick={() => setSelectedProject(project)} 
+          />
         ))}
       </div>
-      
-      {filteredProjects.length === 0 && (
-         <div className="text-center py-20 animate-fade-in-up">
-           <div className="inline-block p-4 rounded-full bg-white/5 mb-4 text-gray-500">
-             <i className="fa-solid fa-folder-open text-3xl"></i>
-           </div>
-           <p className="text-gray-400">No projects found in this category yet.</p>
-         </div>
-      )}
 
-      {/* Project Details Modal - Moved to Portal to fix stacking context issues */}
+      {/* Modal - Redesigned */}
       {selectedProject && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-          <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-            onClick={closeModal}
-          ></div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0a0a14]/90 backdrop-blur-xl animate-fadeIn" onClick={() => setSelectedProject(null)}></div>
           
-          {/* Modal Container - Responsive adjustments */}
-          <div className="relative w-full max-w-3xl max-h-[85vh] sm:max-h-[90vh] flex flex-col glass-panel rounded-2xl border-neonPurple/20 shadow-2xl shadow-neonPurple/10 animate-fade-in-up bg-[#0f172a]/95 overflow-hidden shadow-black/50">
-            
-            {/* Close Button - Positioned absolutely */}
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#0a0a14] glass-panel rounded-[2rem] border-white/20 shadow-2xl overflow-hidden flex flex-col animate-fade-in-up">
             <button 
-              onClick={closeModal}
-              className="absolute top-3 right-3 z-50 w-8 h-8 rounded-full bg-black/50 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/10 backdrop-blur-md"
+              onClick={() => setSelectedProject(null)}
+              className="absolute top-6 right-6 z-50 w-10 h-10 rounded-full bg-white/5 hover:bg-secondaryPink flex items-center justify-center transition-all border border-white/10 group"
             >
-              <i className="fa-solid fa-xmark text-white text-sm"></i>
+              <i className="fa-solid fa-xmark text-white group-hover:rotate-90 transition-transform"></i>
             </button>
 
-            {/* Modal Header Image - Responsive height */}
-            <div className="relative h-40 sm:h-64 md:h-72 w-full overflow-hidden shrink-0 group">
-               <img 
-                 src={selectedProject.image} 
-                 alt={selectedProject.title} 
-                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-               />
-               <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent"></div>
-               <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-8 pr-4">
-                 <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 text-glow leading-tight">{selectedProject.title}</h2>
-                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                   {selectedProject.tags.map(tag => (
-                     <span key={tag} className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full bg-neonPurple/20 text-neonPurple border border-neonPurple/30 backdrop-blur-sm">
-                       {tag}
-                     </span>
-                   ))}
-                 </div>
-               </div>
-            </div>
-
-            {/* Modal Content Body - Scrollable Area */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-8 overscroll-contain bg-gradient-to-b from-[#0f172a] to-transparent">
-              <div className="mb-6 sm:mb-8">
-                <h3 className="text-lg sm:text-xl font-bold text-neonCyan mb-2 sm:mb-3 flex items-center gap-2">
-                  <i className="fa-solid fa-circle-info text-sm"></i> Overview
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-sm sm:text-base lg:text-lg">
-                  {selectedProject.longDescription || selectedProject.description}
-                </p>
+            <div className="flex flex-col lg:flex-row h-full">
+              <div className="w-full lg:w-1/2 h-64 lg:h-full relative overflow-hidden shrink-0">
+                <img src={selectedProject.image} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0a0a14] via-transparent to-transparent" />
               </div>
 
-              {selectedProject.features && (
-                <div className="mb-6 sm:mb-8">
-                  <h3 className="text-lg sm:text-xl font-bold text-neonCyan mb-2 sm:mb-3 flex items-center gap-2">
-                     <i className="fa-solid fa-star text-sm"></i> Key Features
-                  </h3>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                    {selectedProject.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 text-gray-300 text-sm sm:text-base p-2 rounded-lg hover:bg-white/5 transition-colors">
-                        <i className="fa-solid fa-check text-neonPurple mt-1 shrink-0"></i>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              
-              {/* Gallery Preview */}
-              {selectedProject.gallery && selectedProject.gallery.length > 0 && (
-                <div className="mb-6 sm:mb-8">
-                    <h3 className="text-lg sm:text-xl font-bold text-neonCyan mb-2 sm:mb-3 flex items-center gap-2">
-                       <i className="fa-solid fa-images text-sm"></i> Gallery
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
-                        {selectedProject.gallery.map((img, i) => (
-                            <div key={i} className="aspect-video rounded-lg overflow-hidden border border-white/10 hover:border-neonCyan/50 transition-colors group/img cursor-pointer">
-                                <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-              )}
+              <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <span className="text-accentPink font-black uppercase tracking-widest text-[10px]">Project Analysis</span>
+                    <h2 className="text-4xl md:text-5xl font-black text-white">{selectedProject.title}</h2>
+                  </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t border-white/10 mt-4 sm:mt-auto">
-                <a 
-                  href={selectedProject.githubLink} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-center font-semibold flex items-center justify-center gap-2 text-sm sm:text-base group/git"
-                >
-                  <i className="fa-brands fa-github text-lg group-hover/git:rotate-12 transition-transform"></i>
-                  Source Code
-                </a>
-                <a 
-                  href={selectedProject.demoLink} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-xl bg-neonCyan/10 hover:bg-neonCyan/20 border border-neonCyan/30 hover:border-neonCyan/50 transition-colors text-neonCyan text-center font-semibold flex items-center justify-center gap-2 text-sm sm:text-base group/live"
-                >
-                  <i className="fa-solid fa-rocket group-hover/live:-translate-y-1 group-hover/live:translate-x-1 transition-transform"></i>
-                  Live Demo
-                </a>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.tags.map(tag => (
+                      <span key={tag} className="px-3 py-1 rounded-full bg-primaryPurple/10 text-accentGlow border border-primaryPurple/30 text-[10px] font-bold uppercase tracking-widest">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <p className="text-gray-300 leading-relaxed text-lg font-light">
+                    {selectedProject.longDescription || selectedProject.description}
+                  </p>
+
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      <div className="w-2 h-2 bg-secondaryPink rounded-full shadow-[0_0_8px_#ec4899]" />
+                      Core Capabilities
+                    </h3>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {selectedProject.features?.map((f, i) => (
+                        <li key={i} className="flex items-center gap-3 text-gray-400 text-sm bg-white/5 p-3 rounded-xl border border-white/5">
+                           <i className="fa-solid fa-bolt text-accentPink"></i>
+                           {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-4 pt-8">
+                    <a href={selectedProject.githubLink} className="flex-1 py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-center font-bold transition-all hover:scale-[1.02] flex items-center justify-center gap-2">
+                      <i className="fa-brands fa-github text-xl"></i> Source
+                    </a>
+                    <a href={selectedProject.demoLink} className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-primaryPurple to-secondaryPink text-center font-bold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2">
+                      <i className="fa-solid fa-rocket"></i> Launch
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>,
         document.body
       )}
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      `}</style>
     </div>
   );
 };
