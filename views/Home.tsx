@@ -9,7 +9,7 @@ interface HomeProps {
 const ScrambleText: React.FC<{ text: string; className?: string; delay?: number }> = ({ text, className = "", delay = 0 }) => {
   const [output, setOutput] = useState('');
   const [isHovered, setIsHovered] = useState(false);
-  
+
   useEffect(() => {
     const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?/~';
     let iteration = 0;
@@ -33,7 +33,7 @@ const ScrambleText: React.FC<{ text: string; className?: string; delay?: number 
           clearInterval(interval);
         }
 
-        iteration += 1 / 3; 
+        iteration += 1 / 3;
       }, 30);
     };
 
@@ -51,28 +51,28 @@ const ScrambleText: React.FC<{ text: string; className?: string; delay?: number 
     const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?/~';
     let iteration = 0;
     const interval = setInterval(() => {
-        setOutput(
-          text
-            .split('')
-            .map((letter, index) => {
-              if (index < iteration) {
-                return text[index];
-              }
-              return symbols[Math.floor(Math.random() * symbols.length)];
-            })
-            .join('')
-        );
-        if (iteration >= text.length) {
-          clearInterval(interval);
-          setIsHovered(false);
-        }
-        iteration += 1; 
-      }, 20);
+      setOutput(
+        text
+          .split('')
+          .map((letter, index) => {
+            if (index < iteration) {
+              return text[index];
+            }
+            return symbols[Math.floor(Math.random() * symbols.length)];
+          })
+          .join('')
+      );
+      if (iteration >= text.length) {
+        clearInterval(interval);
+        setIsHovered(false);
+      }
+      iteration += 1;
+    }, 20);
   };
 
   return (
     <span className={`${className} cursor-default`} onMouseEnter={handleHover}>
-        {output || text.split('').map(() => '#').join('')}
+      {output || text.split('').map(() => '#').join('')}
     </span>
   );
 };
@@ -88,11 +88,11 @@ const TypewriterRotator: React.FC<{ items: string[]; delay?: number; className?:
     let isDeleting = false;
     let charIndex = 0;
     let typingTimeout: ReturnType<typeof setTimeout>;
-    
+
     const tick = () => {
       if (unmounted) return;
       const current = items[loopIndex % items.length];
-      
+
       if (isDeleting) {
         setText(current.substring(0, charIndex - 1));
         charIndex--;
@@ -120,15 +120,15 @@ const TypewriterRotator: React.FC<{ items: string[]; delay?: number; className?:
 
       typingTimeout = setTimeout(tick, delta);
     };
-    
+
     const initialDelay = setTimeout(() => {
-       tick();
+      tick();
     }, delay);
 
     return () => {
-       unmounted = true;
-       clearTimeout(initialDelay);
-       clearTimeout(typingTimeout);
+      unmounted = true;
+      clearTimeout(initialDelay);
+      clearTimeout(typingTimeout);
     };
   }, [items, delay]);
 
@@ -145,25 +145,25 @@ const Particles = () => {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-10 mix-blend-screen">
       {Array.from({ length: 45 }).map((_, i) => {
-         const size = Math.random() * 2.5 + 0.5;
-         const left = Math.random() * 100;
-         const top = Math.random() * 100;
-         const animDuration = 15 + Math.random() * 25;
-         const animDelay = Math.random() * 5;
-         const color = Math.random() > 0.5 ? '#8b5cf6' : '#ec4899';
-         return (
-           <div 
-             key={i}
-             className="absolute rounded-full"
-             style={{
-               width: size, height: size, left: `${left}%`, top: `${top}%`,
-               backgroundColor: color,
-               boxShadow: `0 0 ${size * 2}px ${color}`,
-               animation: `float-particle ${animDuration}s linear infinite ${animDelay}s`,
-               opacity: Math.random() * 0.7 + 0.2
-             }}
-           />
-         )
+        const size = Math.random() * 2.5 + 0.5;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const animDuration = 15 + Math.random() * 25;
+        const animDelay = Math.random() * 5;
+        const color = Math.random() > 0.5 ? '#8b5cf6' : '#ec4899';
+        return (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: size, height: size, left: `${left}%`, top: `${top}%`,
+              backgroundColor: color,
+              boxShadow: `0 0 ${size * 2}px ${color}`,
+              animation: `float-particle ${animDuration}s linear infinite ${animDelay}s`,
+              opacity: Math.random() * 0.7 + 0.2
+            }}
+          />
+        )
       })}
     </div>
   )
@@ -172,7 +172,7 @@ const Particles = () => {
 const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // normalized -1 to 1
   const [rawMousePos, setRawMousePos] = useState({ x: 0, y: 0 }); // for cursor glow
-  
+
   const tiltRef = useRef<HTMLDivElement>(null);
   const [tiltStyle, setTiltStyle] = useState({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' });
 
@@ -189,30 +189,30 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   }, []);
 
   const handlePhotoHover = (e: MouseEvent<HTMLDivElement>) => {
-     if (!tiltRef.current) return;
-     const rect = tiltRef.current.getBoundingClientRect();
-     const x = e.clientX - rect.left;
-     const y = e.clientY - rect.top;
-     
-     const xc = rect.width / 2;
-     const yc = rect.height / 2;
-     const dx = x - xc;
-     const dy = y - yc;
-     
-     const tiltX = (dy / yc) * -12; // 12 deg tilt
-     const tiltY = (dx / xc) * 12;
-     
-     setTiltStyle({
-        transform: `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.05, 1.05, 1.05)`
-     });
+    if (!tiltRef.current) return;
+    const rect = tiltRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    const dx = x - xc;
+    const dy = y - yc;
+
+    const tiltX = (dy / yc) * -12; // 12 deg tilt
+    const tiltY = (dx / xc) * 12;
+
+    setTiltStyle({
+      transform: `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.05, 1.05, 1.05)`
+    });
   };
 
   const handlePhotoLeave = () => {
-     setTiltStyle({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' });
+    setTiltStyle({ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' });
   };
 
   const distFromCenter = Math.min(Math.sqrt(mousePos.x ** 2 + mousePos.y ** 2), 1);
-  const glowIntensity = 1 + (1 - distFromCenter) * 0.4; 
+  const glowIntensity = 1 + (1 - distFromCenter) * 0.4;
 
   const parallaxBg = { transform: `translate(${mousePos.x * -10}px, ${mousePos.y * -10}px)` };
   const parallaxMid = { transform: `translate(${mousePos.x * -25}px, ${mousePos.y * -25}px)` };
@@ -220,9 +220,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center text-left px-6 relative z-10 pt-24 pb-32 w-full overflow-hidden cursor-default bg-gradient-to-br from-[#0a0a14] to-[#140a1f]">
-      
+
       {/* Dynamic Custom Cursor Aura */}
-      <div 
+      <div
         className="fixed w-96 h-96 bg-gradient-to-r from-primaryPurple/20 to-secondaryPink/20 rounded-full blur-[120px] pointer-events-none z-50 mix-blend-screen transition-transform duration-300 ease-out"
         style={{ left: rawMousePos.x - 192, top: rawMousePos.y - 192 }}
       />
@@ -231,14 +231,14 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       <Particles />
       <div className="absolute inset-0 pointer-events-none z-0" style={parallaxBg}>
         {/* Central Radial Glow */}
-        <div 
+        <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-gradient-radial from-primaryPurple/10 to-transparent opacity-60 blur-3xl transition-transform duration-300 ease-out"
           style={{ transform: `translate(calc(-50% + ${mousePos.x * 30}px), calc(-50% + ${mousePos.y * 30}px)) scale(${glowIntensity})` }}
         />
-        
+
         {/* Animated Purple Liquid Blob */}
         <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-primaryPurple/15 blur-[80px] animate-blob rounded-full mix-blend-screen" />
-        
+
         {/* Animated Pink Liquid Blob */}
         <div className="absolute bottom-[10%] right-[10%] w-[450px] h-[450px] bg-secondaryPink/15 blur-[100px] animate-blob rounded-full mix-blend-screen" style={{ animationDelay: '2s', animationDuration: '9s' }} />
       </div>
@@ -251,10 +251,10 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
 
       {/* Layer 3: Foreground Main UI */}
       <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between w-full max-w-7xl mx-auto gap-12 lg:gap-8 mt-12 transition-transform duration-300" style={parallaxFg}>
-        
+
         {/* LEFT COMPONENT: Text & CTA */}
         <div className="flex-1 w-full lg:w-1/2 flex flex-col items-start text-left shrink-0">
-          
+
           <div className="opacity-0 animate-entry-scale" style={{ animationDelay: '200ms' }}>
             <div className="p-[1px] rounded-full mb-6 inline-block hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-shadow duration-300 bg-gradient-to-r from-primaryPurple to-secondaryPink">
               <span className="bg-gradient-to-r from-accentGlow to-accentPink text-transparent bg-clip-text px-5 py-1.5 rounded-full font-bold text-xs md:text-sm uppercase tracking-widest block bg-[#0a0a14] backdrop-blur-md">
@@ -309,7 +309,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               </span>
             </button>
           </div>
-          
+
           <div className="mt-10 flex gap-8 text-2xl text-gray-400 opacity-0 animate-fade-in-up" style={{ animationDelay: '1200ms' }}>
             <a href="#" className="hover:text-primaryPurple transition-all hover:scale-125 transform hover:drop-shadow-[0_0_12px_rgba(139,92,246,0.8)]"><i className="fa-brands fa-github"></i></a>
             <a href="#" className="hover:text-secondaryPink transition-all hover:scale-125 transform hover:drop-shadow-[0_0_12px_rgba(236,72,153,0.8)]"><i className="fa-brands fa-linkedin"></i></a>
@@ -319,60 +319,60 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </div>
 
         {/* RIGHT COMPONENT: Glowing 3D Glass Profile */}
-        <div 
-           className="w-full lg:w-1/2 flex items-center justify-center relative mt-16 lg:mt-0 opacity-0 animate-entry-slide-right min-h-[450px]" 
-           style={{ animationDelay: '600ms' }}
+        <div
+          className="w-full lg:w-1/2 flex items-center justify-center relative mt-16 lg:mt-0 opacity-0 animate-entry-slide-right min-h-[450px]"
+          style={{ animationDelay: '600ms' }}
         >
-           {/* High Intensity Gradient Halo */}
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[480px] md:h-[480px] bg-gradient-to-tr from-primaryPurple/60 via-secondaryPink/40 to-transparent blur-[80px] animate-blob rounded-full z-0 opacity-80" />
-           
-           <div 
-             ref={tiltRef}
-             onMouseMove={handlePhotoHover}
-             onMouseLeave={handlePhotoLeave}
-             className="relative z-10 w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] rounded-[2rem] p-[2px] bg-gradient-to-tr from-primaryPurple via-white/10 to-secondaryPink shadow-[0_0_50px_rgba(139,92,246,0.4)] transition-all duration-300 ease-out group"
-             style={tiltStyle}
-           >
-             {/* Profile Photo Placeholder Overlay */}
-             <div className="w-full h-full rounded-[1.8rem] overflow-hidden relative bg-[#0a0a14]/90 backdrop-blur-2xl">
-               <img src="/profile.png" alt="Arya Profile" className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.15]" />
-               
-               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a14]/90" />
-               <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-primaryPurple/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-               
-               {/* Light Sweep Reflection */}
-               <div className="absolute top-0 -left-[100%] w-[150%] h-[150%] bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-[30deg] translate-x-[-100%] group-hover:animate-sweep pointer-events-none" />
-             </div>
+          {/* High Intensity Gradient Halo */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[480px] md:h-[480px] bg-gradient-to-tr from-primaryPurple/60 via-secondaryPink/40 to-transparent blur-[80px] animate-blob rounded-full z-0 opacity-80" />
 
-             {/* Small Code Snippet Floating Card */}
-             <div className="absolute -bottom-8 -left-8 md:-left-12 glass-panel rounded-xl border border-primaryPurple/30 p-4 font-mono text-[10px] md:text-xs text-left bg-[#0a0a14]/80 backdrop-blur-3xl shadow-[0_0_30px_rgba(236,72,153,0.3)] animate-float z-20">
-                <div className="flex gap-2 mb-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                </div>
-                <div className="space-y-1.5 text-gray-200">
-                  <p><span className="text-secondaryPink">import</span> <span className="text-white">{'{'}</span> <span className="text-accentGlow">Innovation</span> <span className="text-white">{'}'}</span> <span className="text-secondaryPink">from</span> <span className="text-green-300">'@arya/mind'</span>;</p>
-                  <p className="mt-2"><span className="text-primaryPurple">await</span> <span className="text-accentPink">Innovation</span>.execute();<span className="inline-block w-1.5 h-3 bg-white ml-1 animate-pulse align-middle"></span></p>
-                </div>
-             </div>
+          <div
+            ref={tiltRef}
+            onMouseMove={handlePhotoHover}
+            onMouseLeave={handlePhotoLeave}
+            className="relative z-10 w-64 h-64 md:w-80 md:h-80 lg:w-[400px] lg:h-[400px] rounded-[2rem] p-[2px] bg-gradient-to-tr from-primaryPurple via-white/10 to-secondaryPink shadow-[0_0_50px_rgba(139,92,246,0.4)] transition-all duration-300 ease-out group"
+            style={tiltStyle}
+          >
+            {/* Profile Photo Placeholder Overlay */}
+            <div className="w-full h-full rounded-[1.8rem] overflow-hidden relative bg-[#0a0a14]/90 backdrop-blur-2xl">
+              <img src="/profile.png" alt="Arya Profile" className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.15]" />
 
-             {/* Tech Icon Floating Badge */}
-             <div className="absolute -top-6 -right-6 bg-[#140a1f]/80 backdrop-blur-xl p-4 rounded-xl border border-secondaryPink/40 shadow-[0_0_20px_rgba(236,72,153,0.3)] animate-float" style={{ animationDelay: '1s' }}>
-               <i className="fa-brands fa-react text-3xl text-accentGlow animate-[spin_10s_linear_infinite]"></i>
-             </div>
-             
-           </div>
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a14]/90" />
+              <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-primaryPurple/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Light Sweep Reflection */}
+              <div className="absolute top-0 -left-[100%] w-[150%] h-[150%] bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-[30deg] translate-x-[-100%] group-hover:animate-sweep pointer-events-none" />
+            </div>
+
+            {/* Small Code Snippet Floating Card */}
+            <div className="absolute -bottom-8 -left-8 md:-left-12 glass-panel rounded-xl border border-primaryPurple/30 p-4 font-mono text-[10px] md:text-xs text-left bg-[#0a0a14]/80 backdrop-blur-3xl shadow-[0_0_30px_rgba(236,72,153,0.3)] animate-float z-20">
+              <div className="flex gap-2 mb-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              </div>
+              <div className="space-y-1.5 text-gray-200">
+                <p><span className="text-secondaryPink">import</span> <span className="text-white">{'{'}</span> <span className="text-accentGlow">Innovation</span> <span className="text-white">{'}'}</span> <span className="text-secondaryPink">from</span> <span className="text-green-300">'@arya/mind'</span>;</p>
+                <p className="mt-2"><span className="text-primaryPurple">await</span> <span className="text-accentPink">Innovation</span>.execute();<span className="inline-block w-1.5 h-3 bg-white ml-1 animate-pulse align-middle"></span></p>
+              </div>
+            </div>
+
+            {/* Tech Icon Floating Badge */}
+            <div className="absolute -top-6 -right-6 bg-[#140a1f]/80 backdrop-blur-xl p-4 rounded-xl border border-secondaryPink/40 shadow-[0_0_20px_rgba(236,72,153,0.3)] animate-float" style={{ animationDelay: '1s' }}>
+              <i className="fa-brands fa-react text-3xl text-accentGlow animate-[spin_10s_linear_infinite]"></i>
+            </div>
+
+          </div>
         </div>
 
       </div>
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 animate-[fadeIn_1s_ease-out_forwards]" style={{ animationDelay: '2000ms' }}>
-         <div className="flex flex-col items-center gap-2 text-primaryPurple animate-bounce group cursor-pointer hover:text-secondaryPink transition-colors">
-            <span className="text-[10px] tracking-[0.3em] uppercase font-bold text-accentGlow drop-shadow-[0_0_5px_rgba(236,72,153,0.6)]">Discover</span>
-            <div className="w-px h-8 bg-gradient-to-b from-primaryPurple to-transparent"></div>
-         </div>
+        <div className="flex flex-col items-center gap-2 text-primaryPurple animate-bounce group cursor-pointer hover:text-secondaryPink transition-colors">
+          <span className="text-[10px] tracking-[0.3em] uppercase font-bold text-accentGlow drop-shadow-[0_0_5px_rgba(236,72,153,0.6)]">Discover</span>
+          <div className="w-px h-8 bg-gradient-to-b from-primaryPurple to-transparent"></div>
+        </div>
       </div>
 
       <style>{`
