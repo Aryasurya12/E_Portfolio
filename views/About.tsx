@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const experiences = [
   {
@@ -55,236 +56,377 @@ const Counter: React.FC<{ target: number; duration: number }> = ({ target, durat
     return () => observer.disconnect();
   }, [target, duration]);
 
-  return <div ref={countRef}>{count}</div>;
+  return <span ref={countRef}>{count}</span>;
+};
+
+// Motion variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 }
+  }
 };
 
 const About: React.FC = () => {
-  const [scrollY, setScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Parallax Setup
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+
+  // Mouse Parallax for Hero
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mouseX = useSpring(0, { stiffness: 100, damping: 20 });
+  const mouseY = useSpring(0, { stiffness: 100, damping: 20 });
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    
     handleResize();
-    window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return;
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const x = (clientX / innerWidth - 0.5) * 20; // max rotation degrees
+    const y = (clientY / innerHeight - 0.5) * 20;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a14] relative overflow-hidden">
-      
-      {/* BACKGROUND ENHANCEMENT */}
+    <div ref={containerRef} className="min-h-screen bg-[#0a0a14] relative overflow-hidden" onMouseMove={handleMouseMove}>
+
+      {/* 🌌 BACKGROUND ENHANCEMENT */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div 
-          className="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-primaryPurple/5 blur-[140px] rounded-full animate-blob"
-          style={!isMobile ? { transform: `translateY(${scrollY * 0.1}px)` } : {}}
-        />
-        <div 
-          className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-secondaryPink/5 blur-[140px] rounded-full animate-blob delay-1000"
-          style={!isMobile ? { transform: `translateY(${scrollY * -0.1}px)` } : {}}
-        />
+        <motion.div style={{ y: y1 }} className="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-primaryPurple/5 blur-[140px] rounded-full animate-blob" />
+        <motion.div style={{ y: y2 }} className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-secondaryPink/5 blur-[140px] rounded-full animate-blob delay-1000" />
+
+        {/* Subtle Network Lines Background */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-40">
-        
-        {/* 🌟 SECTION 1: SYSTEM GENESIS (HERO) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-24 md:mb-32">
-          
-          <div className="lg:col-span-5 relative group opacity-0 animate-fade-in-up order-2 lg:order-1">
-            <div className="absolute -inset-4 bg-gradient-to-tr from-primaryPurple/20 to-secondaryPink/20 blur-2xl group-hover:opacity-100 opacity-0 transition-opacity duration-700" />
-            <div 
-              className="relative glass-panel p-2 rounded-[2.5rem] md:rounded-[3.5rem] border-white/10 overflow-hidden transition-all duration-700 hover:shadow-[0_0_50px_rgba(139,92,246,0.2)]"
-              style={!isMobile ? { transform: `perspective(1000px) rotateY(${(scrollY * 0.01) % 10}deg)` } : {}}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-40 space-y-32 md:space-y-48">
+
+        {/* 🟣 SECTION 1: IDENTITY SYSTEM (HERO) */}
+        <motion.div
+          initial="hidden" animate="visible" variants={staggerContainer}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+        >
+          <motion.div variants={fadeInUp} className="lg:col-span-5 relative group order-2 lg:order-1" style={{ perspective: 1000 }}>
+            {/* 3D Tilt Container */}
+            <motion.div
+              style={!isMobile ? { rotateX: mouseY, rotateY: mouseX } : {}}
+              className="relative w-full aspect-[4/5] md:aspect-square rounded-[3rem] border border-white/10 bg-white/[0.02] overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.1)]"
             >
-              <div className="relative aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden">
-                <img src="/profile.png" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000" alt="Arya" />
-                <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
-                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]" />
-                   <span className="text-[8px] md:text-[10px] font-black text-white uppercase tracking-widest">Active / Building</span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-left">
-                   <div className="text-[8px] md:text-[10px] font-black text-accentPink uppercase tracking-[0.3em] mb-1 text-left">Identity Node</div>
-                   <div className="text-2xl md:text-3xl font-black text-white text-left">Arya.OS</div>
-                </div>
-              </div>
-            </div>
-          </div>
+              <img src="/profile.png" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 scale-105 group-hover:scale-100" alt="Arya" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/40 to-transparent opacity-90" />
 
-          <div className="lg:col-span-7 space-y-8 md:gap-10 order-1 lg:order-2 text-center lg:text-left">
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-white relative inline-block">
+              {/* Floating UI Overlays */}
+              <div className="absolute top-6 right-6 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]" />
+                <span className="text-[9px] font-black text-white uppercase tracking-widest">Active</span>
+              </div>
+
+              <div className="absolute bottom-8 left-8">
+                <div className="text-[10px] font-black text-accentPink uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                  <i className="fa-solid fa-microchip"></i> Identity Node
+                </div>
+                <div className="text-4xl font-black text-white tracking-tight">Arya.OS</div>
+              </div>
+
+              {/* Floating Code Snippet */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                className="absolute top-1/4 -left-4 md:-left-8 glass-panel p-3 rounded-xl border-white/10 backdrop-blur-xl hidden md:block shadow-2xl"
+              >
+                <pre className="text-[8px] font-mono text-accentGlow"><code>{`const SYS = {
+  status: "Optimized",
+  layer: "Frontend"
+};`}</code></pre>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+
+          <motion.div variants={staggerContainer} className="lg:col-span-7 space-y-8 order-1 lg:order-2 text-center lg:text-left">
+            <motion.div variants={fadeInUp} className="space-y-4">
+              <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-white relative inline-block">
                 System Genesis
-                <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink rounded-full shadow-[0_0_20px_#ec4899]" />
+                <motion.div
+                  initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
+                  className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-primaryPurple via-accentPink to-transparent rounded-full"
+                />
               </h1>
-              <p className="text-gray-500 font-mono text-[10px] md:text-sm tracking-[0.2em] uppercase italic">Architecting the bridge between precision and scale</p>
+              <p className="text-gray-500 font-mono text-[10px] md:text-sm tracking-[0.2em] uppercase italic">
+                Architecting the bridge between precision and scale
+              </p>
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="glass-panel p-6 md:p-8 rounded-3xl border-white/10 relative overflow-hidden group">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primaryPurple to-secondaryPink" />
+              <p className="text-gray-300 text-lg md:text-xl font-light leading-relaxed">
+                "I design systems that bridge <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple to-accentPink font-black italic">intelligent automation</span> with <span className="text-white font-black italic shadow-white/50">real-world usability</span>."
+              </p>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+
+        {/* 🟣 SECTION 2: TERMINAL PANEL */}
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInUp}
+          className="relative max-w-5xl mx-auto"
+        >
+          <div className="glass-panel rounded-3xl border border-white/10 bg-[#0a0a14]/80 backdrop-blur-3xl overflow-hidden relative group">
+            {/* Scanline Effect */}
+            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100%_4px] opacity-20" />
+
+            <div className="flex items-center gap-2 px-6 py-4 bg-white/[0.02] border-b border-white/5">
+              <div className="w-3 h-3 rounded-full bg-red-500/50" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+              <div className="w-3 h-3 rounded-full bg-green-500/50" />
+              <div className="ml-4 text-[10px] font-mono text-gray-500 uppercase tracking-widest">kernel_log.sh</div>
             </div>
 
-            <div className="glass-panel p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border-white/10 bg-white/[0.02] relative group overflow-hidden">
-               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primaryPurple to-secondaryPink opacity-50" />
-               <p className="text-gray-300 text-lg md:text-2xl font-light leading-relaxed group-hover:text-white transition-colors">
-                 "I design systems that bridge <span className="text-primaryPurple font-bold italic">intelligent automation</span> with <span className="text-accentPink font-bold italic">real-world usability</span>."
-               </p>
+            <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+              <p className="text-gray-400 font-mono text-sm leading-loose">
+                <span className="text-accentPink">&gt;</span> Initiating profile...<br />
+                <span className="text-accentPink">&gt;</span> I’m Arya, an Electronics & Computer Science student passionate about building intelligent systems combining <span className="text-white font-bold bg-white/10 px-1 rounded">hardware, software, and AI.</span>
+              </p>
+              <p className="text-gray-400 font-mono text-sm leading-loose">
+                <span className="text-accentGlow">&gt;</span> Analyzing focus parameters...<br />
+                <span className="text-accentGlow">&gt;</span> My primary objectives lie in <span className="text-white font-bold border-b border-primaryPurple">IoT Systems</span>, Web Development, and AI Integration.
+                <span className="animate-pulse inline-block w-2 h-4 bg-white ml-2 align-middle" />
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 🟣 SECTION 3: FLOATING MODULE GRID */}
+        <div className="space-y-16">
+          <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] text-center">Thinking Layer</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+            {[
+              { title: 'Systems Over Features', desc: 'Focus on the ecosystem, not just isolated components.', icon: 'fa-network-wired', offset: 'lg:-mt-8' },
+              { title: 'Real-World First', desc: 'Solving tangible problems through digital logic.', icon: 'fa-earth-americas', offset: 'lg:mt-8' },
+              { title: 'Scalability Mindset', desc: 'Engineering for the growth of tomorrow.', icon: 'fa-arrow-up-right-dots', offset: 'lg:-mt-8' },
+              { title: 'Iterative Loop', desc: 'Build → Test → Improve as a core dev loop.', icon: 'fa-rotate', offset: 'lg:mt-8' }
+            ].map((thought, i) => (
+              <motion.div
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+                key={i}
+                className={`glass-panel p-8 rounded-[2rem] border border-white/5 hover:border-accentPink/50 transition-all duration-500 group relative overflow-hidden hover:-translate-y-4 hover:shadow-[0_20px_40px_-10px_rgba(236,72,153,0.2)] ${thought.offset}`}
+              >
+                {/* Hover Particles */}
+                <div className="absolute inset-0 bg-gradient-radial from-primaryPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 group-hover:bg-accentPink/10">
+                  <i className={`fa-solid ${thought.icon} text-xl text-gray-400 group-hover:text-accentPink transition-colors duration-500`}></i>
+                </div>
+                <h4 className="text-lg font-black text-white mb-3 group-hover:text-accentPink transition-colors">{thought.title}</h4>
+                <p className="text-gray-500 text-xs leading-relaxed font-light">{thought.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* 🟣 SECTION 4: JOURNEY FLOW */}
+        <div className="space-y-16 py-10">
+          <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] text-center">Current System State</h3>
+
+          <div className="relative max-w-5xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
+            {/* Connecting Background Line */}
+            <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink opacity-30 -translate-y-1/2 z-0" />
+
+            {[
+              { title: 'Building', task: 'AI + IoT Automation', tags: ['Python', 'MQTT'], color: 'from-primaryPurple', offset: 'lg:-translate-y-12' },
+              { title: 'Learning', task: 'ML Integration', tags: ['FastAPI', 'PyTorch'], color: 'from-accentPink', offset: 'lg:translate-y-12' },
+              { title: 'Exploring', task: 'Architecture Systems', tags: ['UI/UX', 'Design'], color: 'from-secondaryPink', offset: 'lg:-translate-y-12' }
+            ].map((state, i) => (
+              <motion.div
+                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+                key={i}
+                className={`flex-1 w-full glass-panel p-8 rounded-3xl border border-white/10 relative z-10 group hover:scale-105 transition-transform duration-500 ${state.offset} bg-[#0a0a14]`}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${state.color} to-transparent opacity-5 rounded-3xl group-hover:opacity-10 transition-opacity`} />
+
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-2 h-2 rounded-full bg-white group-hover:animate-ping" />
+                  <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-400 group-hover:text-white transition-colors">{state.title}</h4>
+                </div>
+
+                <div className="text-xl md:text-2xl font-black text-white mb-6 leading-tight">{state.task}</div>
+
+                <div className="flex flex-wrap gap-2">
+                  {state.tags.map((tag, j) => (
+                    <span key={j} className="text-[9px] font-black uppercase tracking-widest text-white/50 bg-white/5 px-3 py-1 rounded-lg group-hover:text-white group-hover:bg-white/10 transition-colors">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* 🟣 SECTION 5: PROGRESSION TIMELINE */}
+        <div className="space-y-16">
+          <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] text-center">Progression Timeline</h3>
+          <div className="relative max-w-4xl mx-auto px-4">
+            {/* Base Line */}
+            <div className="absolute top-4 md:top-1/2 left-6 md:left-0 w-0.5 md:w-full h-full md:h-0.5 bg-white/5 md:-translate-y-1/2 z-0" />
+
+            {/* Animated Fill Line */}
+            <motion.div
+              initial={{ height: 0, width: 0 }}
+              whileInView={!isMobile ? { width: "100%", height: "2px" } : { height: "100%", width: "2px" }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              viewport={{ once: true, margin: "-50px" }}
+              className="absolute top-4 md:top-1/2 left-6 md:left-0 bg-gradient-to-b md:bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink md:-translate-y-1/2 z-0 shadow-[0_0_15px_#ec4899]"
+            />
+
+            <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-16 md:gap-0 pl-16 md:pl-0 z-10">
+              {[
+                { step: 'Foundation', desc: 'Core Engineering Basics', icon: 'fa-cube' },
+                { step: 'Development', desc: 'Fullstack Mastery', icon: 'fa-layer-group' },
+                { step: 'System Thinking', desc: 'Architectural Scale', icon: 'fa-globe' }
+              ].map((stage, i) => (
+                <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} key={i} className="flex md:flex-col items-center gap-6 group cursor-default">
+                  <div className="absolute left-[-46px] md:static w-10 h-10 rounded-xl bg-[#0a0a14] border-2 border-white/20 group-hover:border-accentPink flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_20px_#ec4899]">
+                    <i className={`fa-solid ${stage.icon} text-xs text-white/50 group-hover:text-accentPink transition-colors`} />
+                  </div>
+                  <div className="text-left md:text-center glass-panel md:bg-transparent md:border-none p-4 md:p-0 rounded-2xl md:rounded-none group-hover:-translate-y-2 transition-transform duration-300">
+                    <div className="text-xs font-black text-white uppercase tracking-widest mb-1 group-hover:text-accentPink transition-colors">{stage.step}</div>
+                    <div className="text-[10px] text-gray-500 font-mono">{stage.desc}</div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* 🧠 SECTION 2: KERNEL OVERVIEW */}
-        <div className="max-w-4xl mb-32 md:mb-40 space-y-8 opacity-0 animate-fade-in-up text-center lg:text-left mx-auto lg:mx-0">
-           <div className="flex items-center justify-center lg:justify-start gap-4 text-accentPink font-mono text-[10px] md:text-xs uppercase tracking-[0.4em]">
-              <i className="fa-solid fa-terminal animate-pulse"></i>
-              Kernel Log Overview
-           </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 text-left">
-              <p className="text-gray-300 text-base md:text-lg leading-relaxed font-light">
-                I am an architect of digital infrastructure. My core focus lies in the intersection of <span className="text-white font-bold text-glow-shimmer">intuitive interface design</span> and performant systems.
-              </p>
-              <p className="text-gray-400 text-base md:text-lg leading-relaxed font-light">
-                Every line of code I construct is a module in a larger mission: enhancing human-digital interaction through <span className="text-white font-bold text-glow-shimmer">smart automation</span> and AI integration.
-              </p>
-           </div>
-        </div>
+        {/* 🟣 SECTION 6: TIMELINE EXPERIENCE (ZIG-ZAG) */}
+        <div className="space-y-20 max-w-5xl mx-auto">
+          <div className="text-center">
+            <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] mb-4">System Logistics</h3>
+            <div className="w-16 h-1 bg-gradient-to-r from-primaryPurple to-accentPink mx-auto rounded-full" />
+          </div>
 
-        {/* 💡 SECTION 3: THINKING LAYER */}
-        <div className="mb-32 md:mb-40 space-y-12">
-           <h3 className="text-[10px] md:text-sm font-black text-gray-500 uppercase tracking-[0.5em] text-center">Thinking Layer</h3>
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { title: 'Systems Over Features', desc: 'Focus on the ecosystem, not just isolated components.', icon: 'fa-microchip' },
-                { title: 'Real-World First', desc: 'Solving tangible problems through digital logic.', icon: 'fa-earth-americas' },
-                { title: 'Scalability Mindset', desc: 'Engineering for the growth of tomorrow.', icon: 'fa-arrow-up-right-dots' },
-                { title: 'Build → Test → Improve', desc: 'Iterative refinement as a core development loop.', icon: 'fa-rotate' }
-              ].map((thought, i) => (
-                <div key={i} className="glass-panel p-8 rounded-3xl border-white/5 hover:border-accentPink transition-all duration-500 group relative">
-                   <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:bg-white/10 transition-colors">
-                      <i className={`fa-solid ${thought.icon} text-lg text-primaryPurple group-hover:text-accentPink transition-colors`}></i>
-                   </div>
-                   <h4 className="text-lg font-black text-white mb-2">{thought.title}</h4>
-                   <p className="text-gray-500 text-[11px] leading-relaxed">{thought.desc}</p>
-                </div>
-              ))}
-           </div>
-        </div>
+          <div className="relative">
+            {/* Central Timeline Vertical Line */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-[2px] bg-white/5 md:-translate-x-1/2">
+              <motion.div
+                initial={{ height: 0 }} whileInView={{ height: "100%" }} transition={{ duration: 2, ease: "easeInOut" }} viewport={{ once: true }}
+                className="w-full bg-gradient-to-b from-primaryPurple via-accentPink to-secondaryPink shadow-[0_0_15px_#ec4899]"
+              />
+            </div>
 
-        {/* 🚀 SECTION 4: CURRENT SYSTEM STATE */}
-        <div className="mb-32 md:mb-40 space-y-12">
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {[
-                { title: 'Building', task: 'AI + IoT Home Automation', tags: ['Python', 'MQTT', 'LLM'], color: 'bg-primaryPurple' },
-                { title: 'Learning', task: 'Backend + ML Integration', tags: ['FastAPI', 'PyTorch'], color: 'bg-accentPink' },
-                { title: 'Exploring', task: 'System-Level Design Thinking', tags: ['UI/UX', 'Architecture'], color: 'bg-accentGlow' }
-              ].map((state, i) => (
-                <div key={i} className="glass-panel p-8 md:p-10 rounded-[2.5rem] border-white/10 relative overflow-hidden group">
-                   <div className="absolute top-0 right-0 p-6 opacity-10">
-                      <div className={`w-3 h-3 rounded-full ${state.color} animate-ping`} />
-                   </div>
-                   <h4 className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${state.color.replace('bg-', 'text-')}`}>{state.title}</h4>
-                   <div className="text-xl md:text-2xl font-black text-white mb-6 leading-tight">{state.task}</div>
-                   <div className="flex flex-wrap gap-2">
-                      {state.tags.map((tag, j) => (
-                        <span key={j} className="text-[9px] font-mono text-gray-500 bg-white/5 border border-white/10 px-3 py-1 rounded-full">{tag}</span>
-                      ))}
-                   </div>
-                </div>
-              ))}
-           </div>
-        </div>
+            <div className="space-y-16">
+              {experiences.map((exp, idx) => {
+                const isEven = idx % 2 === 0;
+                return (
+                  <motion.div
+                    initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={fadeInUp}
+                    key={idx}
+                    className={`relative flex flex-col md:flex-row items-center gap-8 ${isEven ? 'md:flex-row-reverse' : ''}`}
+                  >
+                    {/* Timeline Node */}
+                    <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-[#0a0a14] border-[3px] border-accentPink shadow-[0_0_15px_#ec4899] md:-translate-x-1/2 z-20 -translate-x-1/2" />
 
-        {/* 📈 SECTION 5: GROWTH SNAPSHOT */}
-        <div className="mb-32 md:mb-48 space-y-16">
-           <h3 className="text-[10px] md:text-sm font-black text-gray-500 uppercase tracking-[0.5em] text-center">Growth Snapshot</h3>
-           <div className="relative max-w-4xl mx-auto px-4">
-              <div className="absolute top-0 md:top-1/2 left-4 md:left-0 w-[2px] md:w-full h-full md:h-[2px] bg-white/5 z-0" />
-              <div className="absolute top-0 md:top-1/2 left-4 md:left-0 w-[2px] md:w-full h-full md:h-[2px] bg-gradient-to-b md:bg-gradient-to-r from-primaryPurple via-accentPink to-transparent z-0 opacity-40 md:animate-glow-sweep" />
-              
-              <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-12 md:gap-0">
-                 {[
-                   { step: 'Foundation', desc: 'Core Engineering Basics' },
-                   { step: 'Development', desc: 'Fullstack Mastery' },
-                   { step: 'System Thinking', desc: 'Architectural Scale' }
-                 ].map((stage, i) => (
-                   <div key={i} className="flex md:flex-col items-center gap-6 group relative z-10">
-                      <div className="w-5 h-5 rounded-full bg-[#0a0a14] border-2 border-white/20 group-hover:border-accentPink group-hover:scale-125 transition-all">
-                         <div className="absolute inset-0 rounded-full bg-accentPink blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {/* Empty Space for Grid Balancing */}
+                    <div className="hidden md:block md:w-1/2" />
+
+                    {/* Content Card */}
+                    <div className="w-full md:w-1/2 pl-20 md:pl-0">
+                      <div className={`glass-panel p-8 rounded-3xl border border-white/5 hover:border-accentPink/30 transition-all duration-500 group relative overflow-hidden bg-[#0a0a14]/80 hover:-translate-y-2 ${isEven ? 'md:mr-12' : 'md:ml-12'}`}>
+                        {/* Watermark */}
+                        <div className={`absolute -bottom-4 text-6xl md:text-8xl font-black text-white/[0.02] italic pointer-events-none ${isEven ? 'right-4 text-right' : 'left-4'}`}>
+                          {exp.watermark}
+                        </div>
+
+                        <div className="flex items-center gap-4 mb-6 relative z-10">
+                          <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+                            <i className={`${exp.icon} text-xl ${exp.iconColor}`}></i>
+                          </div>
+                          <div>
+                            <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">{exp.period}</div>
+                            <p className="text-accentPink text-[10px] font-black uppercase tracking-[0.2em]">{exp.org}</p>
+                          </div>
+                        </div>
+
+                        <h4 className="text-xl md:text-2xl font-black text-white mb-4 relative z-10 group-hover:text-accentPink transition-colors">{exp.role}</h4>
+                        <p className="text-sm text-gray-400 font-light leading-relaxed relative z-10">{exp.desc}</p>
                       </div>
-                      <div className="text-left md:text-center">
-                         <div className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest mb-1 group-hover:text-accentPink transition-colors">{stage.step}</div>
-                         <div className="text-[9px] md:text-[10px] text-gray-500 font-mono italic">{stage.desc}</div>
-                      </div>
-                   </div>
-                 ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* 🟣 SECTION 7: LIVE METRICS PANEL */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+          {[
+            { label: 'Projects Built', value: 30, icon: 'fa-code-merge' },
+            { label: 'Hackathons', value: 5, icon: 'fa-trophy' },
+            { label: 'Core Committees', value: 3, icon: 'fa-users' },
+            { label: 'Systems Logic', value: 12, icon: 'fa-gears' }
+          ].map((stat, i) => (
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+              key={i} className="glass-panel p-8 rounded-3xl border border-white/5 text-center group hover:border-accentPink/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-primaryPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-4 group-hover:border-accentPink transition-colors">
+                  <i className={`fa-solid ${stat.icon} text-gray-400 group-hover:text-accentPink transition-colors`}></i>
+                </div>
+                <div className="text-4xl md:text-5xl font-black text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-accentPink transition-all">
+                  <Counter target={stat.value} duration={2000} />+
+                </div>
+                <div className="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em]">{stat.label}</div>
               </div>
-           </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* ⚙️ SECTION 6: SYSTEM LOGISTICS */}
-        <div className="mb-32 md:mb-40 space-y-12">
-           <div className="text-center">
-              <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter">System Logistics</h3>
-              <div className="w-16 h-1 bg-gradient-to-r from-primaryPurple to-accentPink mx-auto mt-4 rounded-full" />
-           </div>
+        {/* 🟣 SECTION 8: IMPACT PANEL (CTA) */}
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
+          className="relative max-w-4xl mx-auto overflow-hidden rounded-[3rem] p-1 glass-panel border-none"
+        >
+          {/* Animated Background Wave */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primaryPurple via-accentPink to-secondaryPink opacity-20 animate-pulse" />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
 
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {experiences.map((exp, idx) => (
-                <div key={idx} className="glass-panel p-8 md:p-10 rounded-[2.5rem] border-white/5 hover:border-accentPink transition-all duration-500 group relative bg-[#0a0a14]/60 overflow-hidden">
-                   <div className="absolute -right-4 -bottom-4 text-7xl md:text-9xl font-black text-white/[0.03] italic pointer-events-none">{exp.watermark}</div>
-                   <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors mb-8">
-                      <i className={`${exp.icon} text-xl md:text-2xl ${exp.iconColor}`}></i>
-                   </div>
-                   <div className="space-y-4 relative z-10 text-left">
-                      <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">{exp.period}</div>
-                      <h4 className="text-xl md:text-2xl font-black text-white group-hover:text-accentPink transition-colors leading-tight">{exp.role}</h4>
-                      <p className="text-accentPink text-[10px] font-black uppercase tracking-[0.2em]">{exp.org}</p>
-                   </div>
-                </div>
-              ))}
-           </div>
-        </div>
+          <div className="relative z-10 bg-[#0a0a14]/90 backdrop-blur-2xl rounded-[2.9rem] px-8 py-20 md:py-32 text-center border border-white/10">
+            <h2 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] mb-12">
+              Let's build something <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink animate-glow-sweep inline-block">impactful.</span>
+            </h2>
 
-        {/* ⚡ SECTION 7: IMPACT SIGNALS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-32 md:mb-48">
-           {[
-             { label: 'Projects Built', value: 30, icon: 'fa-code-merge' },
-             { label: 'Hackathons', value: 5, icon: 'fa-trophy' },
-             { label: 'Core Committees', value: 3, icon: 'fa-users' },
-             { label: 'Systems Logic', value: 12, icon: 'fa-gears' }
-           ].map((stat, i) => (
-             <div key={i} className="text-center group">
-                <div className="text-primaryPurple text-lg md:text-xl mb-4 group-hover:text-accentPink">
-                   <i className={`fa-solid ${stat.icon}`}></i>
-                </div>
-                <div className="text-3xl md:text-5xl font-black text-white mb-2 group-hover:text-accentPink transition-colors">
-                   <Counter target={stat.value} duration={2000} />+
-                </div>
-                <div className="text-[9px] text-gray-600 font-black uppercase tracking-[0.2em]">{stat.label}</div>
-             </div>
-           ))}
-        </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+              <button onClick={() => window.scrollTo(0, 0)} className="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-primaryPurple to-accentPink text-white font-black uppercase tracking-widest text-[10px] transition-all hover:scale-105 active:scale-95 overflow-hidden">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                <span className="relative z-10">View Projects</span>
+              </button>
+              <button className="px-8 py-4 rounded-xl border border-white/20 text-white font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all hover:border-white/40 active:scale-95">
+                Contact Me
+              </button>
+            </div>
+          </div>
+        </motion.div>
 
-        {/* 🎯 SECTION 9: STRONG CTA */}
-        <div className="text-center space-y-10 relative py-20 overflow-hidden">
-           <div className="absolute inset-0 bg-primaryPurple/5 blur-[80px] rounded-full scale-150 animate-pulse" />
-           <div className="relative z-10 space-y-8 px-4">
-              <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[1.1]">
-                Let's build something <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink">impactful.</span>
-              </h2>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                 <button onClick={() => window.scrollTo(0,0)} className="px-8 py-4 rounded-xl bg-gradient-to-r from-primaryPurple to-accentPink text-white font-black uppercase tracking-widest text-[10px] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)] transition-all active:scale-95">
-                    View Projects
-                 </button>
-                 <button className="px-8 py-4 rounded-xl border border-white/10 text-white font-black uppercase tracking-widest text-[10px] hover:bg-white/5 transition-all active:scale-95">
-                    Contact Me
-                 </button>
-              </div>
-           </div>
-        </div>
       </div>
     </div>
   );

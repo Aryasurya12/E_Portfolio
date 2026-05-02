@@ -4,30 +4,44 @@ import { Project } from '../types';
 
 const projects: Project[] = [
   {
-    id: 'edunexus',
-    title: 'EduNexus',
-    category: 'mobile',
-    tags: ['Flutter', 'Supabase', 'Mobile'],
-    description: 'Smart attendance system with seamless mobile UI. Built for SIH 2025.',
-    longDescription: 'EduNexus is a comprehensive attendance management system designed to address the inefficiencies of manual tracking in educational institutions. Leveraging Flutter for a cross-platform mobile experience and Supabase for real-time data synchronization, it provides a seamless interface for both students and faculty.',
+    id: 'home-automation',
+    title: 'Home Automation System',
+    category: 'hardware',
+    tags: ['IoT', 'AI', 'ESP32', 'Python'],
+    description: 'Intelligent home automation integrating IoT hardware with AI-driven predictive logic.',
+    longDescription: 'A comprehensive smart home ecosystem bridging the gap between physical hardware and cloud-based AI. Utilizing ESP32 microcontrollers and a Python-based intelligent backend, the system learns user habits and preemptively adjusts environmental controls, optimizing both comfort and energy efficiency.',
     features: [
-      'QR Code Attendance Marking',
-      'Real-time Analytics Dashboard',
-      'Offline Support with Auto-sync',
-      'Geo-fencing validation'
+      'Predictive AI Automation',
+      'Real-time IoT Sensor Telemetry',
+      'Secure Local Network Fallback',
+      'Custom Mobile Dashboard'
     ],
-    image: 'https://picsum.photos/800/600?random=1',
-    gallery: [
-      'https://picsum.photos/800/600?random=1',
-      'https://picsum.photos/800/600?random=11',
-      'https://picsum.photos/800/600?random=12'
-    ],
+    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=800&auto=format&fit=crop',
+    gallery: [],
     githubLink: '#',
     demoLink: '#'
   },
   {
-    id: 'codequest',
-    title: 'CodeQuest',
+    id: 'break-the-loop',
+    title: 'Break the Loop',
+    category: 'web',
+    tags: ['React', 'Node.js', 'Hackathon'],
+    description: 'Award-winning hackathon project focusing on developer productivity.',
+    longDescription: 'Developed during a 48-hour competitive hackathon, Break the Loop is an innovative productivity tool designed specifically for developers. It analyzes coding patterns and intercepts infinite loops or deep rabbit-hole debugging sessions, prompting breaks and providing AI-assisted pair-programming insights.',
+    features: [
+      'IDE Extension Integration',
+      'Pattern Recognition Engine',
+      'Gamified Focus Metrics',
+      'Real-time Code Analysis'
+    ],
+    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop',
+    gallery: [],
+    githubLink: '#',
+    demoLink: '#'
+  },
+  {
+    id: 'edunexus',
+    title: 'EduNexus',
     category: 'web',
     tags: ['React', 'TypeScript', 'Gemini API'],
     description: 'Gamified Python learning platform using Gemini API for AI-driven feedback.',
@@ -93,16 +107,19 @@ const projects: Project[] = [
 
 type CategoryType = 'all' | 'mobile' | 'web' | 'desktop' | 'hardware';
 
+type CardType = 'feature' | 'standard' | 'compact';
+
 const ProjectCard: React.FC<{ 
   project: Project; 
   index: number; 
-  onClick: () => void 
-}> = ({ project, index, onClick }) => {
+  onClick: () => void;
+  type: CardType;
+}> = ({ project, index, onClick, type }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 }); // For proximity glow
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -112,18 +129,35 @@ const ProjectCard: React.FC<{
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isMobile || !cardRef.current) return;
+    if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-    setTilt({ x: x * 8, y: y * -8 });
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    setMousePos({ x, y });
+
+    if (!isMobile) {
+      const tiltX = ((x / rect.width) * 2 - 1) * 4; // reduced tilt for elegance
+      const tiltY = ((y / rect.height) * 2 - 1) * -4;
+      setTilt({ x: tiltX, y: tiltY });
+    }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     setTilt({ x: 0, y: 0 });
+    // Keep glow smoothly fading out by moving it offscreen or letting opacity handle it
   };
+
+  const isFeature = type === 'feature';
+  const isCompact = type === 'compact';
+
+  // Grid spanning classes based on type
+  const spanClasses = isFeature 
+    ? 'md:col-span-2 lg:col-span-2' 
+    : isCompact 
+      ? 'md:col-span-1 lg:col-span-1'
+      : 'md:col-span-1 lg:col-span-1'; // standard
 
   return (
     <div 
@@ -132,37 +166,105 @@ const ProjectCard: React.FC<{
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="relative group cursor-pointer opacity-0 animate-fade-in-up"
-      style={{ animationDelay: `${200 + index * 100}ms` }}
+      className={`relative group cursor-pointer opacity-0 animate-fade-in-up flex flex-col ${spanClasses}`}
+      style={{ animationDelay: `${150 + index * 100}ms` }}
     >
       <div 
-        className="relative h-full glass-panel rounded-[2rem] overflow-hidden border border-white/10 transition-all duration-500 ease-out"
+        className={`relative h-full w-full glass-panel overflow-hidden border border-white/10 transition-all duration-500 ease-out flex flex-col
+          ${isFeature ? 'rounded-[2.5rem]' : 'rounded-[2rem]'}
+        `}
         style={!isMobile && isHovered ? { 
-          transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.02)`,
-          boxShadow: '0 25px 50px -12px rgba(139, 92, 246, 0.4)'
+          transform: `perspective(1200px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.02) translateY(-8px)`,
+          boxShadow: isFeature 
+            ? '0 30px 60px -15px rgba(139, 92, 246, 0.4), 0 0 40px rgba(236,72,153,0.2)'
+            : '0 20px 40px -10px rgba(139, 92, 246, 0.2)'
         } : {}}
       >
-        <div className="relative h-[240px] md:h-[280px] overflow-hidden">
-          <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/20 to-transparent" />
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase tracking-widest text-accentPink">
-            {project.category}
-          </div>
-        </div>
+        {/* Proximity Glow Background */}
+        <div 
+          className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 mix-blend-screen"
+          style={{
+            background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, rgba(139,92,246,0.15), transparent 40%)`,
+            opacity: isHovered ? 1 : 0
+          }}
+        />
 
-        <div className="p-6 md:p-8 space-y-4">
-          <h3 className="text-2xl md:text-3xl font-black text-white group-hover:text-accentPink transition-colors">{project.title}</h3>
-          <div className="flex flex-wrap gap-2">
-            {project.tags.slice(0, 3).map(tag => (
-              <span key={tag} className="text-[9px] uppercase font-black px-2.5 py-1 rounded-full bg-white/5 text-gray-400 border border-white/5">
-                {tag}
-              </span>
-            ))}
+        {isFeature ? (
+          // --- FEATURE CARD (Large) ---
+          <div className="flex flex-col md:flex-row h-full w-full relative z-10">
+             <div className="w-full md:w-[55%] h-[250px] md:h-full relative overflow-hidden order-1 md:order-2 shrink-0">
+                <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0a0a14] via-[#0a0a14]/60 to-transparent" />
+             </div>
+             <div className="w-full md:w-[45%] p-8 md:p-12 flex flex-col justify-center order-2 md:order-1 relative z-10 bg-gradient-to-r from-[#0a0a14] to-transparent">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-accentPink backdrop-blur-md">
+                    {project.category}
+                  </div>
+                  <i className="fa-solid fa-arrow-up-right-from-square text-gray-500 group-hover:text-white transition-colors text-sm"></i>
+                </div>
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primaryPurple group-hover:to-accentPink transition-all duration-300 mb-4 tracking-tight">
+                  {project.title}
+                </h3>
+                <p className="text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3 mb-6 font-light">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {project.tags.slice(0, 3).map(tag => (
+                    <span key={tag} className="text-[10px] uppercase font-bold tracking-wider px-3 py-1.5 rounded-lg bg-white/5 text-gray-300 border border-white/5">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+             </div>
           </div>
-          <p className="text-gray-400 text-xs md:text-sm leading-relaxed line-clamp-2">
-            {project.description}
-          </p>
-        </div>
+        ) : isCompact ? (
+          // --- COMPACT CARD (Small) ---
+          <div className="p-8 h-full flex flex-col relative z-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-primaryPurple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-accentPink transition-colors">
+                 <i className="fa-solid fa-code text-sm"></i>
+              </div>
+              <i className="fa-solid fa-arrow-up-right-from-square text-gray-600 group-hover:text-white transition-colors text-xs"></i>
+            </div>
+            <h3 className="text-2xl font-black text-white mb-3 group-hover:text-accentPink transition-colors">{project.title}</h3>
+            <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mb-6">
+              {project.description}
+            </p>
+            <div className="flex flex-wrap gap-1.5 mt-auto">
+              {project.tags.slice(0, 2).map(tag => (
+                <span key={tag} className="text-[8px] uppercase font-black px-2 py-1 rounded bg-black/40 text-gray-400">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          // --- STANDARD CARD (Medium) ---
+          <div className="h-full flex flex-col relative z-10">
+            <div className="relative h-[200px] overflow-hidden shrink-0">
+              <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] to-transparent" />
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase tracking-widest text-primaryPurple">
+                {project.category}
+              </div>
+            </div>
+            <div className="p-8 flex flex-col flex-1 bg-gradient-to-b from-[#0a0a14] to-transparent">
+              <h3 className="text-2xl font-black text-white group-hover:text-accentPink transition-colors mb-3">{project.title}</h3>
+              <p className="text-gray-400 text-xs md:text-sm leading-relaxed line-clamp-2 mb-6">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-auto">
+                {project.tags.slice(0, 3).map(tag => (
+                  <span key={tag} className="text-[9px] uppercase font-black px-2.5 py-1 rounded-full bg-white/5 text-gray-400 border border-white/5">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -224,10 +326,22 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-        {filteredProjects.map((project, index) => (
-          <ProjectCard key={project.id} project={project} index={index} onClick={() => setSelectedProject(project)} />
-        ))}
+      {/* Asymmetric Grid Layout */}
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-6 md:gap-8 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
+        {filteredProjects.map((project, index) => {
+          // Determine layout type based on index to create an asymmetric grid
+          let type: CardType = 'standard';
+          if (index % 4 === 0) type = 'feature';
+          else if (index % 4 === 1) type = 'standard';
+          else if (index % 4 === 2) type = 'compact';
+          else if (index % 4 === 3) type = 'standard'; // standard will span 1 col. Wait, if 0 is col-span-2, 1 is col-span-1 (row 1 is 3 cols). 2 is col-span-1, 3 is col-span-2. Let's make index 3 'feature' to complete the 3 cols!
+          
+          if (index % 4 === 3) type = 'feature'; // Makes it col-span-2. So row 2 is compact(1) + feature(2).
+
+          return (
+            <ProjectCard key={project.id} project={project} index={index} type={type} onClick={() => setSelectedProject(project)} />
+          );
+        })}
       </div>
 
       {/* Responsive Modal */}

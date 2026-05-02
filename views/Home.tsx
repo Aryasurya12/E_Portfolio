@@ -1,4 +1,5 @@
 import React, { useState, MouseEvent, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { SectionType } from '../types';
 
 interface HomeProps {
@@ -257,20 +258,21 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
 
           <div className="opacity-0 animate-entry-scale" style={{ animationDelay: '200ms' }}>
             <div className="p-[1px] rounded-full mb-6 inline-block hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-shadow duration-300 bg-gradient-to-r from-primaryPurple to-secondaryPink">
-              <span className="bg-gradient-to-r from-accentGlow to-accentPink text-transparent bg-clip-text px-5 py-1.5 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-widest block bg-[#0a0a14] backdrop-blur-md">
-                Available for Hire
+              <span className="bg-gradient-to-r from-accentGlow to-accentPink bg-clip-text px-5 py-1.5 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-widest block bg-[#0a0a14] backdrop-blur-md">
+                ⚡ Available for opportunities
               </span>
             </div>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold mb-6 tracking-tight leading-[1.1] opacity-0 translate-y-8 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-            Crafting Digital
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-secondaryPink to-primaryPurple bg-[length:200%_auto] animate-gradient-shimmer relative inline-block group cursor-default pb-2">
-              Experiences.
-              {!isMobile && <div className="absolute -inset-2 bg-gradient-to-r from-primaryPurple/30 to-secondaryPink/30 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none -z-10 rounded-xl" />}
-            </span>
-          </h1>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold mb-6 tracking-tight leading-[1.1]"
+            >
+              Crafting Intelligent
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-secondaryPink to-primaryPurple bg-[length:200%_auto] animate-gradient-shimmer relative inline-block group pb-2">
+                Digital Experiences.
+                {!isMobile && <div className="absolute -inset-2 bg-gradient-to-r from-primaryPurple/30 to-secondaryPink/30 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none -z-10 rounded-xl" />}
+              </span>
+            </motion.h1>
 
           <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
             <div className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-mono tracking-tighter text-white">
@@ -278,13 +280,14 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          <div className="max-w-xl opacity-0 animate-fade-in-up mb-10" style={{ animationDelay: '800ms' }}>
-            <p className="text-gray-200 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-light">
-              <TypewriterRotator items={["Frontend Developer", "AI System Builder", "Automation Engineer"]} delay={1200} />
-            </p>
-            <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 font-bold tracking-[0.2em] uppercase mt-4">
-              2nd Year ECS Student @ Architecting high-performance digital systems
-            </p>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }} className="max-w-xl mb-10">
+              <p className="text-gray-200 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-light">
+                <TypewriterRotator items={["Electronics & CS Student", "IoT & Hardware Hacker", "AI Integration Specialist"]} delay={1200} />
+              </p>
+              <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 font-bold tracking-[0.2em] uppercase mt-4">
+                Bridging Hardware, Software, and Artificial Intelligence
+              </p>
+            </motion.div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto opacity-0 animate-fade-in-up" style={{ animationDelay: '1000ms' }}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SectionType } from '../types';
+import Logo from './Logo';
 
 interface NavbarProps {
   currentSection: SectionType;
@@ -40,11 +41,11 @@ const Navbar: React.FC<NavbarProps> = ({ currentSection, onNavigate }) => {
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo / Brand */}
-          <div className="flex items-center gap-3 group cursor-pointer" onClick={() => handleNavClick('home')}>
-             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primaryPurple to-secondaryPink flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-bolt-lightning text-white"></i>
-             </div>
-             <span className="text-xl font-black text-white tracking-tighter hidden sm:block">ARYA.OS</span>
+          <div onClick={() => handleNavClick('home')} className="hidden sm:block">
+            <Logo variant="horizontal" size="sm" />
+          </div>
+          <div onClick={() => handleNavClick('home')} className="block sm:hidden">
+            <Logo variant="icon" size="sm" />
           </div>
 
           {/* Desktop Navigation */}
