@@ -45,7 +45,6 @@ const competitions: Competition[] = [
       { name: 'Final Presentation', passed: true }
     ]
   },
-
   {
     id: 'robotics-project-expo',
     name: 'Robotics Project Expo',
@@ -63,7 +62,6 @@ const competitions: Competition[] = [
       { name: 'Project Expo', passed: true }
     ]
   },
-
   {
     id: 'inter-college-hackathons',
     name: 'Inter-College Hackathons',
@@ -81,11 +79,10 @@ const competitions: Competition[] = [
       { name: 'Finalist Stage', passed: true }
     ]
   },
-
   {
     id: 'mit-agriculture',
     name: 'Agriculture Innovation Project',
-    organizer: 'MIT Initiative',
+    organizer: 'MIT WPU Pune',
     date: '2025',
     status: 'Final Stage',
     statusColor: 'text-gray-300',
@@ -98,7 +95,24 @@ const competitions: Competition[] = [
       { name: 'Project Evaluation', passed: true },
       { name: 'Final Stage', passed: true }
     ]
-  }
+  },
+  {
+    id: 'sih-internal-2025',
+    name: 'Smart India Hackathon – Internal Round',
+    organizer: 'College Internal SIH Selection',
+    date: '2025',
+    status: 'Qualified',
+    statusColor: 'text-primaryPurple',
+    description: 'Cleared the college-level internal selection round for Smart India Hackathon, progressing through the idea evaluation and presentation stage with our proposed solution.',
+    tags: ['Hackathon', 'Innovation', 'Problem Solving'],
+    icon: 'fa-solid fa-lightbulb',
+    category: 'achievement',
+    rounds: [
+      { name: 'Idea Submission', passed: true },
+      { name: 'Internal Evaluation', passed: true },
+      { name: 'Internal Selection', passed: true }
+    ]
+  },
 ];
 
 const certifications: Certification[] = [
