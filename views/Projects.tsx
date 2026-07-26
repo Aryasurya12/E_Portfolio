@@ -4,114 +4,203 @@ import { Project } from '../types';
 
 const projects: Project[] = [
   {
-    id: 'home-automation',
-    title: 'Home Automation System',
-    category: 'hardware',
-    tags: ['IoT', 'AI', 'ESP32', 'Python'],
-    description: 'Intelligent home automation integrating IoT hardware with AI-driven predictive logic.',
-    longDescription: 'A comprehensive smart home ecosystem bridging the gap between physical hardware and cloud-based AI. Utilizing ESP32 microcontrollers and a Python-based intelligent backend, the system learns user habits and preemptively adjusts environmental controls, optimizing both comfort and energy efficiency.',
+    id: 'SheSpeaks',
+    title: 'SheSpeaks',
+    category: 'IOT',
+    tags: ['Safety Tech', 'IoT', 'Web', 'Hackathon'],
+
+    description:
+      'A smart safety and incident-reporting system designed to capture critical evidence and trigger emergency alerts during unsafe situations.',
+
+    longDescription:
+      'SheSpeaks is a safety-focused hackathon project designed to make emergency reporting faster and more reliable. The concept combines a discreet trigger mechanism with automatic evidence collection, allowing the system to capture important information such as audio, video and location data when an emergency is detected or manually triggered. The project explores how software, connected devices and intelligent automation can work together to create a practical personal-safety ecosystem.',
+
     features: [
-      'Predictive AI Automation',
-      'Real-time IoT Sensor Telemetry',
-      'Secure Local Network Fallback',
-      'Custom Mobile Dashboard'
+      'Emergency Incident Triggering',
+      'Audio, Video & Location Evidence Capture',
+      'Real-time Emergency Alert System',
+      'Privacy-focused Incident Reporting'
     ],
-    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=800&auto=format&fit=crop',
-    gallery: [],
-    githubLink: '#',
-    demoLink: '#'
-  },
-  {
-    id: 'break-the-loop',
-    title: 'Break the Loop',
-    category: 'web',
-    tags: ['React', 'Node.js', 'Hackathon'],
-    description: 'Award-winning hackathon project focusing on developer productivity.',
-    longDescription: 'Developed during a 48-hour competitive hackathon, Break the Loop is an innovative productivity tool designed specifically for developers. It analyzes coding patterns and intercepts infinite loops or deep rabbit-hole debugging sessions, prompting breaks and providing AI-assisted pair-programming insights.',
-    features: [
-      'IDE Extension Integration',
-      'Pattern Recognition Engine',
-      'Gamified Focus Metrics',
-      'Real-time Code Analysis'
-    ],
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop',
-    gallery: [],
-    githubLink: '#',
-    demoLink: '#'
-  },
-  {
-    id: 'edunexus',
-    title: 'EduNexus',
-    category: 'web',
-    tags: ['React', 'TypeScript', 'Gemini API'],
-    description: 'Gamified Python learning platform using Gemini API for AI-driven feedback.',
-    longDescription: 'CodeQuest revolutionizes coding education by turning it into an RPG adventure. Built with React and TypeScript, it integrates Google\'s Gemini API to provide intelligent, context-aware code reviews and personalized hints, helping students overcome roadblocks without giving away the solution.',
-    features: [
-      'AI-Powered Code Analysis',
-      'Gamified Progression System',
-      'Interactive Code Editor',
-      'Daily Coding Challenges'
-    ],
-    image: 'https://picsum.photos/800/600?random=2',
+
+    image: '/projects/SheSpeaks/cover.png',
+
     gallery: [
-      'https://picsum.photos/800/600?random=2',
-      'https://picsum.photos/800/600?random=21',
-      'https://picsum.photos/800/600?random=22'
+      '/projects/SheSpeaksp/dashboard.png',
+      '/projects/SheSpeaks/reporting.png',
+      '/projects/SheSpeaks/architecture.png',
+      '/projects/SheSpeaks/prototype.png'
     ],
+
     githubLink: '#',
     demoLink: '#'
   },
   {
-    id: 'flightres',
-    title: 'Flight UI',
-    category: 'desktop',
-    tags: ['Java Swing', 'C', 'Desktop'],
-    description: 'Desktop interface for ticket reservation exploring complex data structures.',
-    longDescription: 'A robust desktop application simulating a real-world airline reservation system. This project bridges the gap between low-level C data structures for performance-critical backend operations and a user-friendly Java Swing frontend.',
+    id: 'e-portfolio',
+    title: 'ARYA.OS Portfolio',
+    category: 'WEB',
+    tags: ['React', 'TypeScript', 'Tailwind CSS', 'UI/UX'],
+
+    description:
+      'A futuristic developer portfolio designed to showcase my projects, skills and journey through an immersive digital experience.',
+
+    longDescription:
+      'ARYA.OS is my personal developer portfolio built as more than a traditional resume website. The interface follows a futuristic cyberpunk-inspired visual language with glassmorphism, responsive layouts and interactive project showcases. The portfolio acts as a central digital identity for presenting my work across software development, artificial intelligence and machine learning while also demonstrating my approach to frontend engineering and UI/UX design.',
+
     features: [
-      'B-Tree Indexing for Search',
-      'Graphical Seat Map Selection',
-      'Multi-threaded Transactions',
-      'PDF Ticket Generation'
+      'Futuristic Glassmorphism Interface',
+      'Interactive Project Showcase',
+      'Responsive Portfolio Experience',
+      'Custom ARYA.OS Design System'
     ],
-    image: 'https://picsum.photos/800/600?random=3',
+
+    image: '/projects/portfolio/cover.png',
+
     gallery: [
-      'https://picsum.photos/800/600?random=3',
-      'https://picsum.photos/800/600?random=31'
+      '/projects/portfolio/home.png',
+      '/projects/portfolio/projects.png',
+      '/projects/portfolio/project-modal.png',
+      '/projects/portfolio/skills.png'
     ],
+
+    githubLink: 'https://github.com/Aryasurya12/E_Portfolio',
+    demoLink: '#'
+  },
+  {
+    id: 'zync',
+    title: 'ZYNC',
+    category: ['AI/ML'],
+    tags: ['EdTech', 'AI', 'TypeScript', 'Web'],
+
+    description:
+      'A next-generation educational platform exploring how AI can create smarter and more engaging learning experiences.',
+
+    longDescription:
+      'ZYNC is a next-generation educational platform designed to rethink the way students learn and teachers interact with digital education. The project combines modern web technologies with AI-driven capabilities to create a more intelligent, interactive and personalized learning environment. Rather than functioning as a conventional learning-management interface, ZYNC explores how intelligent systems can support students throughout their learning journey while providing a unified digital education experience.',
+
+    features: [
+      'AI-powered Learning Experience',
+      'Interactive Student Environment',
+      'Modern Educational Dashboard',
+      'Student & Teacher-focused Ecosystem'
+    ],
+
+    image: '/projects/zync/cover.png',
+
+    gallery: [
+      '/projects/zync/home.png',
+      '/projects/zync/student-dashboard.png',
+      '/projects/zync/learning.png',
+      '/projects/zync/ai-features.png',
+      '/projects/zync/teacher-dashboard.png'
+    ],
+
+    githubLink: 'https://github.com/Aryasurya12/ZYNC',
+    demoLink: '#'
+  },
+  {
+    id: 'krushit-ai',
+    title: 'Krushit — AI Smart Agriculture',
+    category: ['AI/ML', 'IOT'],
+    tags: ['AI/ML', 'Next.js', 'FastAPI', 'Supabase', 'TensorFlow'],
+
+    description:
+      'An AI-powered agriculture platform combining crop intelligence, disease detection, farmer assistance and data-driven farm management.',
+
+    longDescription:
+      'Krushit is an intelligent agriculture platform designed to help farmers make better data-driven decisions through AI and modern web technologies. The system includes a farmer-facing application and an administrative dashboard backed by Supabase. It combines crop and region-based intelligence with AI-assisted agricultural insights, while the broader architecture supports TensorFlow-based crop disease detection, FastAPI services, multilingual interaction and integration with real-time agricultural data. The project focuses on making advanced agricultural intelligence accessible through a simple digital platform.',
+
+    features: [
+      'AI-based Crop & Regional Insights',
+      'Crop Disease Detection using CNN',
+      'Farmer App & Administrative Dashboard',
+      'AI Agricultural Advisory System'
+    ],
+
+    image: '/projects/krushit/cover.png',
+
+    gallery: [
+      '/projects/krushit/farmer-dashboard.png',
+      '/projects/krushit/admin-dashboard.png',
+      '/projects/krushit/disease-detection.png',
+      '/projects/krushit/architecture.png',
+      '/projects/krushit/ai-assistant.png'
+    ],
+
     githubLink: '#',
     demoLink: '#'
   },
   {
-    id: 'iot-weather',
-    title: 'IoT Weather Station',
-    category: 'hardware',
-    tags: ['ESP32', 'IoT', 'C++', 'Sensors'],
-    description: 'Real-time weather monitoring system sending data to cloud via MQTT.',
-    longDescription: 'A compact, low-power weather station prototype built on the ESP32 platform. It interfaces with DHT11 and BMP180 sensors to capture temperature, humidity, and atmospheric pressure, transmitting telemetry to a HiveMQ broker.',
+    id: 'spacescope',
+    title: 'SpaceScope',
+    category: 'WEB',
+    tags: ['SpaceTech', 'TypeScript', 'Data', 'Dashboard'],
+
+    description:
+      'A futuristic web dashboard that transforms raw space data into an accessible and visually engaging exploration experience.',
+
+    longDescription:
+      'SpaceScope is a futuristic web-based dashboard designed to make space exploration and astronomical information more accessible to everyday users. The project focuses on transforming raw space-related data into an intuitive visual experience through modern dashboard design and data presentation. SpaceScope demonstrates how complex scientific information can be organized and presented through an engaging, user-friendly web interface.',
+
     features: [
-      'Power Optimization',
-      'MQTT Data Telemetry',
-      'OLED Status Display',
-      '3D Printed Enclosure'
+      'Space Data Visualization',
+      'Interactive Exploration Dashboard',
+      'Data-driven Web Experience',
+      'Futuristic Responsive Interface'
     ],
-    image: 'https://picsum.photos/800/600?random=4',
+
+    image: '/projects/spacescope/cover.png',
+
     gallery: [
-      'https://picsum.photos/800/600?random=4',
-      'https://picsum.photos/800/600?random=41'
+      '/projects/spacescope/home.png',
+      '/projects/spacescope/dashboard.png',
+      '/projects/spacescope/explore.png',
+      '/projects/spacescope/data-view.png'
     ],
-    githubLink: '#',
+
+    githubLink: 'https://github.com/Aryasurya12/SpaceScope',
     demoLink: '#'
-  }
+  },
+  {
+    id: 'codequest',
+    title: 'CodeQuest',
+    category: 'AI/ML',
+    tags: ['Python', 'AI', 'EdTech', 'Gamification'],
+
+    description:
+      'A gamified Python learning platform that combines interactive coding challenges with AI-assisted learning.',
+
+    longDescription:
+      'CodeQuest is an interactive educational platform designed to make learning Python more engaging through gamification. Inspired by progression-based learning applications such as Duolingo, the project transforms programming concepts into a structured and interactive learning journey. Learners progress through coding activities while AI-assisted features provide additional support, creating an experience that combines programming education, gamification and intelligent assistance.',
+
+    features: [
+      'Gamified Python Learning',
+      'Interactive Coding Challenges',
+      'AI-assisted Learning Support',
+      'Progress-based Learning Experience'
+    ],
+
+    image: '/projects/codequest/cover.png',
+
+    gallery: [
+      '/projects/codequest/home.png',
+      '/projects/codequest/lesson.png',
+      '/projects/codequest/challenge.png',
+      '/projects/codequest/ai-assistant.png',
+      '/projects/codequest/progress.png'
+    ],
+
+    githubLink: 'https://github.com/Aryasurya12/CodeQuest',
+    demoLink: '#'
+  },
 ];
 
-type CategoryType = 'all' | 'mobile' | 'web' | 'desktop' | 'hardware';
+type CategoryType = 'ALL' | 'AI/ML' | 'SOFTWARE' | 'WEB' | 'IOT';
 
-type CardType = 'feature' | 'standard' | 'compact';
+type CardType = 'FEATURE' | 'STANDARD' | 'COMPACT';
 
-const ProjectCard: React.FC<{ 
-  project: Project; 
-  index: number; 
+const ProjectCard: React.FC<{
+  project: Project;
+  index: number;
   onClick: () => void;
   type: CardType;
 }> = ({ project, index, onClick, type }) => {
@@ -133,7 +222,7 @@ const ProjectCard: React.FC<{
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     setMousePos({ x, y });
 
     if (!isMobile) {
@@ -149,18 +238,18 @@ const ProjectCard: React.FC<{
     // Keep glow smoothly fading out by moving it offscreen or letting opacity handle it
   };
 
-  const isFeature = type === 'feature';
-  const isCompact = type === 'compact';
+  const isFeature = type === 'FEATURE';
+  const isCompact = type === 'COMPACT';
 
   // Grid spanning classes based on type
-  const spanClasses = isFeature 
-    ? 'md:col-span-2 lg:col-span-2' 
-    : isCompact 
+  const spanClasses = isFeature
+    ? 'md:col-span-2 lg:col-span-2'
+    : isCompact
       ? 'md:col-span-1 lg:col-span-1'
       : 'md:col-span-1 lg:col-span-1'; // standard
 
   return (
-    <div 
+    <div
       ref={cardRef}
       onClick={onClick}
       onMouseMove={handleMouseMove}
@@ -169,19 +258,19 @@ const ProjectCard: React.FC<{
       className={`relative group cursor-pointer opacity-0 animate-fade-in-up flex flex-col ${spanClasses}`}
       style={{ animationDelay: `${150 + index * 100}ms` }}
     >
-      <div 
+      <div
         className={`relative h-full w-full glass-panel overflow-hidden border border-white/10 transition-all duration-500 ease-out flex flex-col
           ${isFeature ? 'rounded-[2.5rem]' : 'rounded-[2rem]'}
         `}
-        style={!isMobile && isHovered ? { 
+        style={!isMobile && isHovered ? {
           transform: `perspective(1200px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.02) translateY(-8px)`,
-          boxShadow: isFeature 
+          boxShadow: isFeature
             ? '0 30px 60px -15px rgba(139, 92, 246, 0.4), 0 0 40px rgba(236,72,153,0.2)'
             : '0 20px 40px -10px rgba(139, 92, 246, 0.2)'
         } : {}}
       >
         {/* Proximity Glow Background */}
-        <div 
+        <div
           className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-300 mix-blend-screen"
           style={{
             background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, rgba(139,92,246,0.15), transparent 40%)`,
@@ -192,31 +281,31 @@ const ProjectCard: React.FC<{
         {isFeature ? (
           // --- FEATURE CARD (Large) ---
           <div className="flex flex-col md:flex-row h-full w-full relative z-10">
-             <div className="w-full md:w-[55%] h-[250px] md:h-full relative overflow-hidden order-1 md:order-2 shrink-0">
-                <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0a0a14] via-[#0a0a14]/60 to-transparent" />
-             </div>
-             <div className="w-full md:w-[45%] p-8 md:p-12 flex flex-col justify-center order-2 md:order-1 relative z-10 bg-gradient-to-r from-[#0a0a14] to-transparent">
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-accentPink backdrop-blur-md">
-                    {project.category}
-                  </div>
-                  <i className="fa-solid fa-arrow-up-right-from-square text-gray-500 group-hover:text-white transition-colors text-sm"></i>
+            <div className="w-full md:w-[55%] h-[250px] md:h-full relative overflow-hidden order-1 md:order-2 shrink-0">
+              <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0a0a14] via-[#0a0a14]/60 to-transparent" />
+            </div>
+            <div className="w-full md:w-[45%] p-8 md:p-12 flex flex-col justify-center order-2 md:order-1 relative z-10 bg-gradient-to-r from-[#0a0a14] to-transparent">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-accentPink backdrop-blur-md">
+                  {project.category}
                 </div>
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primaryPurple group-hover:to-accentPink transition-all duration-300 mb-4 tracking-tight">
-                  {project.title}
-                </h3>
-                <p className="text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3 mb-6 font-light">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[10px] uppercase font-bold tracking-wider px-3 py-1.5 rounded-lg bg-white/5 text-gray-300 border border-white/5">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-             </div>
+                <i className="fa-solid fa-arrow-up-right-from-square text-gray-500 group-hover:text-white transition-colors text-sm"></i>
+              </div>
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primaryPurple group-hover:to-accentPink transition-all duration-300 mb-4 tracking-tight">
+                {project.title}
+              </h3>
+              <p className="text-gray-400 text-sm md:text-base leading-relaxed line-clamp-3 mb-6 font-light">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-auto">
+                {project.tags.slice(0, 3).map(tag => (
+                  <span key={tag} className="text-[10px] uppercase font-bold tracking-wider px-3 py-1.5 rounded-lg bg-white/5 text-gray-300 border border-white/5">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         ) : isCompact ? (
           // --- COMPACT CARD (Small) ---
@@ -224,7 +313,7 @@ const ProjectCard: React.FC<{
             <div className="absolute inset-0 bg-gradient-to-br from-primaryPurple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="flex justify-between items-start mb-6">
               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-accentPink transition-colors">
-                 <i className="fa-solid fa-code text-sm"></i>
+                <i className="fa-solid fa-code text-sm"></i>
               </div>
               <i className="fa-solid fa-arrow-up-right-from-square text-gray-600 group-hover:text-white transition-colors text-xs"></i>
             </div>
@@ -272,7 +361,7 @@ const ProjectCard: React.FC<{
 
 const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [filter, setFilter] = useState<CategoryType>('all');
+  const [filter, setFilter] = useState<CategoryType>('ALL');
   const [isAnimating, setIsAnimating] = useState(false);
   const filterContainerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({});
@@ -295,7 +384,13 @@ const Projects: React.FC = () => {
     }
   }, []);
 
-  const filteredProjects = projects.filter(p => filter === 'all' || p.category === filter);
+  const filteredProjects = projects.filter(p => {
+    if (filter === 'ALL') return true;
+    if (Array.isArray(p.category)) {
+      return p.category.includes(filter);
+    }
+    return p.category === filter;
+  });
 
   return (
     <div className="min-h-screen pt-32 pb-40 px-6 max-w-7xl mx-auto relative z-10">
@@ -305,20 +400,19 @@ const Projects: React.FC = () => {
             System Portfolios
           </span>
         </h2>
-        <p className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.4em]">Architecting high-performance digital systems</p>
+        <p className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.4em]">IDEAS I'VE TURNED INTO WORKING SYSTEMS</p>
       </div>
 
       {/* Filter Bar */}
       <div className="flex justify-center mb-16 overflow-x-auto no-scrollbar py-4">
         <div ref={filterContainerRef} className="relative glass-panel rounded-2xl p-1.5 flex gap-1 border-white/10 whitespace-nowrap">
           <div className="absolute top-1.5 bottom-1.5 bg-gradient-to-r from-primaryPurple to-secondaryPink rounded-xl transition-all duration-500" style={indicatorStyle} />
-          {['all', 'mobile', 'web', 'desktop', 'hardware'].map((cat) => (
+          {['ALL', 'AI/ML', 'WEB', 'IOT'].map((cat) => (
             <button
               key={cat}
               onClick={(e) => handleFilterChange(cat as CategoryType, e)}
-              className={`relative z-10 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${
-                filter === cat ? 'text-white active-filter' : 'text-gray-500 hover:text-white'
-              }`}
+              className={`relative z-10 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${filter === cat ? 'text-white active-filter' : 'text-gray-500 hover:text-white'
+                }`}
             >
               {cat}
             </button>
@@ -330,13 +424,13 @@ const Projects: React.FC = () => {
       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-6 md:gap-8 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
         {filteredProjects.map((project, index) => {
           // Determine layout type based on index to create an asymmetric grid
-          let type: CardType = 'standard';
-          if (index % 4 === 0) type = 'feature';
-          else if (index % 4 === 1) type = 'standard';
-          else if (index % 4 === 2) type = 'compact';
-          else if (index % 4 === 3) type = 'standard'; // standard will span 1 col. Wait, if 0 is col-span-2, 1 is col-span-1 (row 1 is 3 cols). 2 is col-span-1, 3 is col-span-2. Let's make index 3 'feature' to complete the 3 cols!
-          
-          if (index % 4 === 3) type = 'feature'; // Makes it col-span-2. So row 2 is compact(1) + feature(2).
+          let type: CardType = 'STANDARD';
+          if (index % 4 === 0) type = 'FEATURE';
+          else if (index % 4 === 1) type = 'STANDARD';
+          else if (index % 4 === 2) type = 'COMPACT';
+          else if (index % 4 === 3) type = 'STANDARD'; // standard will span 1 col. Wait, if 0 is col-span-2, 1 is col-span-1 (row 1 is 3 cols). 2 is col-span-1, 3 is col-span-2. Let's make index 3 'feature' to complete the 3 cols!
+
+          if (index % 4 === 3) type = 'FEATURE'; // Makes it col-span-2. So row 2 is compact(1) + feature(2).
 
           return (
             <ProjectCard key={project.id} project={project} index={index} type={type} onClick={() => setSelectedProject(project)} />
@@ -372,17 +466,17 @@ const Projects: React.FC = () => {
                   <p className="text-gray-400 text-sm md:text-lg leading-relaxed font-light">
                     {selectedProject.longDescription || selectedProject.description}
                   </p>
-                  
+
                   <div className="space-y-4 pt-4">
-                     <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-white">System Features</h4>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {selectedProject.features?.map((f, i) => (
-                          <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
-                             <i className="fa-solid fa-circle-check text-accentPink text-xs"></i>
-                             <span className="text-xs text-gray-300 font-medium">{f}</span>
-                          </div>
-                        ))}
-                     </div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-white">System Features</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {selectedProject.features?.map((f, i) => (
+                        <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
+                          <i className="fa-solid fa-circle-check text-accentPink text-xs"></i>
+                          <span className="text-xs text-gray-300 font-medium">{f}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

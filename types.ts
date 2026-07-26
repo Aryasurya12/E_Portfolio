@@ -3,7 +3,7 @@ export type SectionType = 'home' | 'projects' | 'skills' | 'competitions' | 'abo
 export interface Project {
   id: string;
   title: string;
-  category: 'mobile' | 'web' | 'desktop' | 'design' | 'hardware';
+  category: string | string[];
   tags: string[];
   description: string;
   image: string; // Used as thumbnail or fallback

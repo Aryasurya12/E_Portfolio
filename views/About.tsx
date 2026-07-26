@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, Variants } from 'framer-motion';
 
 const experiences = [
   {
@@ -60,12 +60,12 @@ const Counter: React.FC<{ target: number; duration: number }> = ({ target, durat
 };
 
 // Motion variants
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 40 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -211,33 +211,6 @@ const About: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* 🟣 SECTION 3: FLOATING MODULE GRID */}
-        <div className="space-y-16">
-          <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] text-center">Thinking Layer</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
-            {[
-              { title: 'Systems Over Features', desc: 'Focus on the ecosystem, not just isolated components.', icon: 'fa-network-wired', offset: 'lg:-mt-8' },
-              { title: 'Real-World First', desc: 'Solving tangible problems through digital logic.', icon: 'fa-earth-americas', offset: 'lg:mt-8' },
-              { title: 'Scalability Mindset', desc: 'Engineering for the growth of tomorrow.', icon: 'fa-arrow-up-right-dots', offset: 'lg:-mt-8' },
-              { title: 'Iterative Loop', desc: 'Build → Test → Improve as a core dev loop.', icon: 'fa-rotate', offset: 'lg:mt-8' }
-            ].map((thought, i) => (
-              <motion.div
-                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
-                key={i}
-                className={`glass-panel p-8 rounded-[2rem] border border-white/5 hover:border-accentPink/50 transition-all duration-500 group relative overflow-hidden hover:-translate-y-4 hover:shadow-[0_20px_40px_-10px_rgba(236,72,153,0.2)] ${thought.offset}`}
-              >
-                {/* Hover Particles */}
-                <div className="absolute inset-0 bg-gradient-radial from-primaryPurple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 group-hover:bg-accentPink/10">
-                  <i className={`fa-solid ${thought.icon} text-xl text-gray-400 group-hover:text-accentPink transition-colors duration-500`}></i>
-                </div>
-                <h4 className="text-lg font-black text-white mb-3 group-hover:text-accentPink transition-colors">{thought.title}</h4>
-                <p className="text-gray-500 text-xs leading-relaxed font-light">{thought.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
 
         {/* 🟣 SECTION 4: JOURNEY FLOW */}
         <div className="space-y-16 py-10">
@@ -278,41 +251,6 @@ const About: React.FC = () => {
           </div>
         </div>
 
-        {/* 🟣 SECTION 5: PROGRESSION TIMELINE */}
-        <div className="space-y-16">
-          <h3 className="text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-[0.5em] text-center">Progression Timeline</h3>
-          <div className="relative max-w-4xl mx-auto px-4">
-            {/* Base Line */}
-            <div className="absolute top-4 md:top-1/2 left-6 md:left-0 w-0.5 md:w-full h-full md:h-0.5 bg-white/5 md:-translate-y-1/2 z-0" />
-
-            {/* Animated Fill Line */}
-            <motion.div
-              initial={{ height: 0, width: 0 }}
-              whileInView={!isMobile ? { width: "100%", height: "2px" } : { height: "100%", width: "2px" }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="absolute top-4 md:top-1/2 left-6 md:left-0 bg-gradient-to-b md:bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink md:-translate-y-1/2 z-0 shadow-[0_0_15px_#ec4899]"
-            />
-
-            <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-16 md:gap-0 pl-16 md:pl-0 z-10">
-              {[
-                { step: 'Foundation', desc: 'Core Engineering Basics', icon: 'fa-cube' },
-                { step: 'Development', desc: 'Fullstack Mastery', icon: 'fa-layer-group' },
-                { step: 'System Thinking', desc: 'Architectural Scale', icon: 'fa-globe' }
-              ].map((stage, i) => (
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} key={i} className="flex md:flex-col items-center gap-6 group cursor-default">
-                  <div className="absolute left-[-46px] md:static w-10 h-10 rounded-xl bg-[#0a0a14] border-2 border-white/20 group-hover:border-accentPink flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_20px_#ec4899]">
-                    <i className={`fa-solid ${stage.icon} text-xs text-white/50 group-hover:text-accentPink transition-colors`} />
-                  </div>
-                  <div className="text-left md:text-center glass-panel md:bg-transparent md:border-none p-4 md:p-0 rounded-2xl md:rounded-none group-hover:-translate-y-2 transition-transform duration-300">
-                    <div className="text-xs font-black text-white uppercase tracking-widest mb-1 group-hover:text-accentPink transition-colors">{stage.step}</div>
-                    <div className="text-[10px] text-gray-500 font-mono">{stage.desc}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {/* 🟣 SECTION 6: TIMELINE EXPERIENCE (ZIG-ZAG) */}
         <div className="space-y-20 max-w-5xl mx-auto">

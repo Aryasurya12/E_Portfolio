@@ -262,7 +262,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
                 ⚡ Available for opportunities
               </span>
             </div>
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold mb-6 tracking-tight leading-[1.1]"
             >
@@ -274,11 +274,11 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               </span>
             </motion.h1>
 
-          <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-            <div className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-mono tracking-tighter text-white">
-              <ScrambleText text="Arya Pramod Suryavanshi" delay={800} className="hover:text-accentPink transition-all duration-300" />
+            <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+              <div className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-mono tracking-tighter text-white">
+                <ScrambleText text="Arya Pramod Suryavanshi" delay={800} className="hover:text-accentPink transition-all duration-300" />
+              </div>
             </div>
-          </div>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }} className="max-w-xl mb-10">
               <p className="text-gray-200 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-light">
@@ -313,9 +313,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           </div>
 
           <div className="mt-12 flex gap-8 text-2xl text-gray-500 opacity-0 animate-fade-in-up" style={{ animationDelay: '1200ms' }}>
-            <a href="#" className="hover:text-primaryPurple transition-all hover:scale-125 transform"><i className="fa-brands fa-github"></i></a>
-            <a href="#" className="hover:text-secondaryPink transition-all hover:scale-125 transform"><i className="fa-brands fa-linkedin"></i></a>
-            <a href="#" className="hover:text-white transition-all hover:scale-125 transform"><i className="fa-brands fa-instagram"></i></a>
+            <a href="https://github.com/Aryasurya12" className="hover:text-primaryPurple transition-all hover:scale-125 transform"><i className="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/arya-suryavanshi-9772a9329" className="hover:text-secondaryPink transition-all hover:scale-125 transform"><i className="fa-brands fa-linkedin"></i></a>
+            <a href="https://instagram.com/aryasurya_1231" className="hover:text-white transition-all hover:scale-125 transform"><i className="fa-brands fa-instagram"></i></a>
           </div>
 
         </div>

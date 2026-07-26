@@ -107,9 +107,9 @@ const RadialMeter: React.FC<{ skill: Skill; index: number }> = ({ skill, index }
             stroke="url(#skillGradient)"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            style={{ 
+            style={{
               strokeDashoffset: offset,
-              transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)' 
+              transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
             strokeLinecap="round"
           />
@@ -137,8 +137,8 @@ const RadialMeter: React.FC<{ skill: Skill; index: number }> = ({ skill, index }
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-           <i className={`${skill.icon} text-xs text-white/40 group-hover/skill:text-accentPink transition-colors duration-500`}></i>
-           <span className="text-[7px] font-black tracking-widest text-white/60 group-hover/skill:text-white transition-colors mt-0.5">{progress}%</span>
+          <i className={`${skill.icon} text-xs text-white/40 group-hover/skill:text-accentPink transition-colors duration-500`}></i>
+          <span className="text-[7px] font-black tracking-widest text-white/60 group-hover/skill:text-white transition-colors mt-0.5">{progress}%</span>
         </div>
       </div>
       <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest group-hover/skill:text-white transition-colors text-center">{skill.name}</span>
@@ -196,7 +196,7 @@ const Skills: React.FC = () => {
       {/* 4 Category Skills Grid - Horizontal Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-32 md:mb-40">
         {skillCategories.map((category, catIdx) => (
-          <div 
+          <div
             key={category.id}
             className="group glass-panel p-6 rounded-3xl border border-white/10 hover:border-accentPink/50 hover:shadow-[0_0_40px_rgba(236,72,153,0.15)] transition-all duration-500 hover:-translate-y-2 animate-fade-in-up bg-[#0a0a14]/60 relative overflow-hidden"
             style={{ animationDelay: `${200 + catIdx * 150}ms` }}
@@ -209,7 +209,7 @@ const Skills: React.FC = () => {
                 <i className={`fa-solid ${category.icon} text-sm text-accentGlow group-hover:text-accentPink transition-colors duration-300`}></i>
               </div>
               <h3 className="text-sm font-black text-white tracking-wide uppercase">{category.title}</h3>
-              
+
               {/* Decorative gradient accent underline */}
               <div className="absolute bottom-[-1px] left-0 w-1/3 h-[1px] bg-gradient-to-r from-primaryPurple via-accentPink to-transparent group-hover:w-full transition-all duration-700" />
             </div>
@@ -221,71 +221,6 @@ const Skills: React.FC = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* SECTION 5: STACK FLOW */}
-      <div className="mb-32 md:mb-40">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 uppercase tracking-tighter">Stack Flow Architecture</h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-primaryPurple to-secondaryPink mx-auto rounded-full" />
-        </div>
-
-        <div className="glass-panel p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] border-white/10 bg-[#0a0a14]/40 overflow-x-auto no-scrollbar">
-          <div className="flex items-center justify-between min-w-[700px] md:min-w-0 md:w-full relative py-6">
-            <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -translate-y-1/2 z-0" />
-            
-            {[
-              { label: 'Frontend', icon: 'fa-desktop', color: 'bg-primaryPurple' },
-              { label: 'API Gateway', icon: 'fa-network-wired', color: 'bg-accentPink' },
-              { label: 'Logic Kernel', icon: 'fa-microchip', color: 'bg-accentGlow' },
-              { label: 'Data Hub', icon: 'fa-database', color: 'bg-secondaryPink' },
-              { label: 'AI Engine', icon: 'fa-brain', color: 'bg-white' }
-            ].map((node, i) => (
-              <div key={i} className="relative z-10 flex flex-col items-center gap-4 group">
-                <div className={`w-14 h-14 md:w-20 md:h-20 rounded-2xl md:rounded-3xl ${node.color} flex items-center justify-center shadow-2xl border-2 md:border-4 border-[#0a0a14] group-hover:scale-110 transition-transform duration-500`}>
-                  <i className={`fa-solid ${node.icon} text-lg md:text-2xl ${i === 4 ? 'text-[#0a0a14]' : 'text-white'}`}></i>
-                </div>
-                <span className="text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest group-hover:text-white transition-colors text-center">{node.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* SECTION 6: SYSTEM ARCHITECTURE CARD */}
-      <div className="glass-panel p-10 md:p-20 rounded-[2.5rem] md:rounded-[4rem] border-white/5 flex flex-col lg:flex-row items-center justify-between gap-12 md:gap-16 relative overflow-hidden group">
-         <div className="absolute inset-0 bg-gradient-to-r from-primaryPurple/5 to-secondaryPink/5 opacity-50" />
-         
-         <div className="space-y-6 text-center lg:text-left relative z-10">
-            <h3 className="text-3xl md:text-5xl font-black text-white leading-tight uppercase tracking-tighter">
-               Architecting <br className="hidden md:block" />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink">Resilient Systems</span>
-            </h3>
-            <p className="text-gray-500 max-w-lg text-sm md:text-lg font-light leading-relaxed">
-               My stack is engineered for performance, scalability, and cinematic user experiences. Every module is synchronized for maximum operational efficiency.
-            </p>
-         </div>
-
-         <div className="flex flex-wrap justify-center gap-8 md:gap-16 lg:gap-24 relative z-10">
-            <div className="text-center space-y-2">
-               <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white/5 flex items-center justify-center mx-auto mb-4 border border-white/10 group-hover:border-accentPink/50 transition-colors">
-                  <i className="fa-solid fa-code-branch text-xl md:text-2xl text-accentPink"></i>
-               </div>
-               <div className="text-4xl md:text-6xl font-black text-white">
-                  <Counter target={30} duration={2000} />
-               </div>
-               <div className="text-[8px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.2em]">Deployments</div>
-            </div>
-            <div className="text-center space-y-2">
-               <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white/5 flex items-center justify-center mx-auto mb-4 border border-white/10 group-hover:border-accentGlow/50 transition-colors">
-                  <i className="fa-solid fa-microchip text-xl md:text-2xl text-accentGlow"></i>
-               </div>
-               <div className="text-4xl md:text-6xl font-black text-white">
-                  <Counter target={12} duration={2000} />
-               </div>
-               <div className="text-[8px] md:text-[10px] text-gray-600 font-black uppercase tracking-[0.2em]">Architecture Hubs</div>
-            </div>
-         </div>
       </div>
     </div>
   );

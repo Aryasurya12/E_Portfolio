@@ -15,10 +15,10 @@ const Logo: React.FC<LogoProps> = ({ variant = 'horizontal', className = '', siz
   };
 
   const svgIcon = (
-    <svg 
-      viewBox="0 0 100 100" 
-      className="h-full w-auto drop-shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:scale-105 transition-transform duration-500 cursor-pointer" 
-      fill="none" 
+    <svg
+      viewBox="0 0 100 100"
+      className="h-full w-auto drop-shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:scale-105 transition-transform duration-500 cursor-pointer"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
@@ -30,20 +30,20 @@ const Logo: React.FC<LogoProps> = ({ variant = 'horizontal', className = '', siz
 
       <g stroke="url(#neonLogo)" strokeLinecap="round" strokeLinejoin="round">
         {/* Outer System Circle */}
-        <circle 
-          cx="50" cy="50" r="42" 
-          strokeWidth="4" 
-          strokeDasharray="214 50" 
-          transform="rotate(130 50 50)" 
+        <circle
+          cx="50" cy="50" r="42"
+          strokeWidth="4"
+          strokeDasharray="214 50"
+          transform="rotate(130 50 50)"
         />
-        
+
         {/* Left Leg */}
         <path d="M 28 68 L 50 18" strokeWidth="5" />
         <circle cx="28" cy="68" r="4.5" fill="url(#neonLogo)" stroke="none" />
-        
+
         {/* Right Leg (Thicker) */}
         <path d="M 50 18 L 76 75" strokeWidth="12" />
-        
+
         {/* Crossbar */}
         <path d="M 68 55 L 45 70" strokeWidth="10" />
 
@@ -68,7 +68,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'horizontal', className = '', siz
             ARYA<span className="text-accentPink">.OS</span>
           </div>
           <div className="text-[9px] font-bold tracking-[0.3em] text-primaryPurple uppercase mt-2">
-            Building Intelligent Systems
+            CURIOSITY COMPILED INTO CODE
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'horizontal', className = '', siz
           ARYA<span className="text-accentPink">.OS</span>
         </div>
         <div className="text-[8px] font-bold tracking-[0.3em] text-primaryPurple uppercase">
-          Building Intelligent Systems
+          CURIOSITY COMPILED INTO CODE
         </div>
       </div>
     </div>
