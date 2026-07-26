@@ -291,7 +291,7 @@ const Competitions: React.FC = () => {
   const remainingHackathons = competitions.filter(c => c.id !== 'sih-2025');
 
   return (
-    <div className="min-h-screen pt-32 pb-40 px-6 max-w-7xl mx-auto relative z-10">
+    <div className="min-h-screen pt-24 md:pt-32 pb-24 md:pb-40 px-6 max-w-7xl mx-auto relative z-10">
 
       {/* Background Enhancements */}
       <div className="absolute top-1/4 left-0 w-full h-[500px] bg-gradient-radial from-primaryPurple/5 to-transparent blur-[100px] pointer-events-none" />

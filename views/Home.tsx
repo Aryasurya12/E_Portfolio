@@ -226,7 +226,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const parallaxFg = isMobile ? {} : { transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 10}px)` };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-left px-6 relative z-10 pt-32 pb-40 w-full overflow-hidden cursor-default bg-gradient-to-br from-[#0a0a14] to-[#140a1f]">
+    <div className="min-h-screen flex flex-col justify-center items-center text-left px-6 relative z-10 pt-24 md:pt-32 pb-24 md:pb-40 w-full overflow-hidden cursor-default bg-gradient-to-br from-[#0a0a14] to-[#140a1f]">
 
       {/* Dynamic Custom Cursor Aura (Desktop Only) */}
       {!isMobile && (
@@ -254,7 +254,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between w-full max-w-7xl mx-auto gap-16 lg:gap-8 transition-transform duration-300" style={parallaxFg}>
 
         {/* LEFT COMPONENT: Text & CTA */}
-        <div className="flex-1 w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left shrink-0 order-2 lg:order-1">
+        <div className="flex-1 w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left shrink-0 order-1 lg:order-1">
 
           <div className="opacity-0 animate-entry-scale" style={{ animationDelay: '200ms' }}>
             <div className="p-[1px] rounded-full mb-6 inline-block hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-shadow duration-300 bg-gradient-to-r from-primaryPurple to-secondaryPink">
@@ -322,7 +322,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
 
         {/* RIGHT COMPONENT: Glowing 3D Glass Profile */}
         <div
-          className="w-full lg:w-1/2 flex items-center justify-center relative order-1 lg:order-2 opacity-0 animate-entry-slide-right min-h-[300px] md:min-h-[450px]"
+          className="w-full lg:w-1/2 flex items-center justify-center relative order-2 lg:order-2 opacity-0 animate-entry-slide-right min-h-[300px] md:min-h-[450px]"
           style={{ animationDelay: '600ms' }}
         >
           {/* High Intensity Gradient Halo */}

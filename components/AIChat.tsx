@@ -102,7 +102,7 @@ const AIChat: React.FC<AIChatProps> = ({ currentSection = 'home' }) => {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-black/80 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-md hover:border-accentPink transition-colors group z-50 shadow-[0_0_20px_rgba(139,92,246,0.15)] overflow-hidden"
+            className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-12 h-12 md:w-14 md:h-14 bg-black/80 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-md hover:border-accentPink transition-colors group z-[100] shadow-[0_0_20px_rgba(139,92,246,0.15)] overflow-hidden"
           >
             <div className="absolute inset-0 bg-primaryPurple/20 opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
             <span className="font-mono text-accentPink font-bold tracking-widest text-sm relative z-10">&gt;_</span>

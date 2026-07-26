@@ -220,7 +220,7 @@ const Projects: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen pt-32 pb-40 px-6 max-w-7xl mx-auto relative z-10">
+    <div className="min-h-screen pt-24 md:pt-32 pb-24 md:pb-40 px-6 max-w-7xl mx-auto relative z-10">
       <div className="text-center mb-20 opacity-0 animate-fade-in-up">
         <h2 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink">
@@ -267,14 +267,14 @@ const Projects: React.FC = () => {
 
       {/* Responsive Modal */}
       {selectedProject && createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 md:p-8">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8">
           <div className="absolute inset-0 bg-[#0a0a14]/90 backdrop-blur-3xl" onClick={() => setSelectedProject(null)} />
-          <div className="relative w-full h-full md:max-w-6xl md:h-[85vh] bg-[#0a0a14] md:rounded-[3rem] border-white/10 overflow-hidden flex flex-col md:flex-row animate-modalEntry">
-            <button onClick={() => setSelectedProject(null)} className="absolute top-6 right-6 z-[210] w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-secondaryPink transition-colors">
-              <i className="fa-solid fa-xmark text-xl"></i>
+          <div className="relative w-full max-h-[90vh] md:max-h-[85vh] md:max-w-6xl bg-[#0a0a14] rounded-3xl md:rounded-[3rem] border border-white/10 overflow-hidden flex flex-col md:flex-row animate-modalEntry">
+            <button onClick={() => setSelectedProject(null)} className="absolute top-4 right-4 md:top-6 md:right-6 z-[210] w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 md:bg-white/5 border border-white/20 md:border-white/10 flex items-center justify-center text-white hover:bg-secondaryPink transition-colors">
+              <i className="fa-solid fa-xmark text-lg md:text-xl"></i>
             </button>
 
-            <div className="w-full md:w-[50%] h-64 md:h-auto shrink-0 relative bg-[#05050a] flex items-center justify-center group">
+            <div className="w-full md:w-[50%] h-48 md:h-auto shrink-0 relative bg-[#05050a] flex items-center justify-center group">
               <img 
                 src={selectedProject.gallery && selectedProject.gallery.length > 0 ? selectedProject.gallery[activeImageIndex] : selectedProject.image} 
                 className="w-full h-full object-contain p-4 md:p-8" 

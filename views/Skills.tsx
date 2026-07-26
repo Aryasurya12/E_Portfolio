@@ -144,7 +144,7 @@ const Skills: React.FC = () => {
   const hoveredConnections = hoveredNode ? getConnectedIds(hoveredNode, links) : new Set();
 
   return (
-    <div className="min-h-screen bg-[#05050a] text-white pt-24 pb-12 px-6 flex flex-col items-center relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#05050a] text-white pt-24 md:pt-32 pb-24 md:pb-40 px-6 flex flex-col items-center relative overflow-hidden font-sans">
       {/* Background Environment */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[10%] left-[10%] w-[40vw] h-[40vw] bg-primaryPurple/5 blur-[120px] rounded-full mix-blend-screen" />

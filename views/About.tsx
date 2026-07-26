@@ -167,7 +167,7 @@ const About: React.FC = () => {
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
       </div>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-32 pb-40 space-y-24 md:space-y-32">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-24 md:pt-32 pb-24 md:pb-40 space-y-24 md:space-y-32">
 
         {/* HERO / IDENTITY */}
         <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">

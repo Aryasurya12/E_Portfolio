@@ -33,7 +33,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-40 px-6 max-w-7xl mx-auto relative z-10 flex flex-col justify-center">
+    <div className="min-h-screen pt-24 md:pt-32 pb-24 md:pb-40 px-6 max-w-7xl mx-auto relative z-10 flex flex-col justify-center">
       <div className="text-center mb-16 opacity-0 animate-fade-in-up">
         <h2 className="text-4xl sm:text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primaryPurple via-accentPink to-secondaryPink">
           Establish Link
