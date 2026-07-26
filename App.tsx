@@ -42,6 +42,18 @@ const App: React.FC = () => {
     }, 450); // Slightly less than the 500ms transition to prevent flickers
   };
 
+  useEffect(() => {
+    const handleAryaNavigate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        handleNavigation(customEvent.detail as SectionType);
+      }
+    };
+    window.addEventListener('arya-navigate', handleAryaNavigate);
+    return () => window.removeEventListener('arya-navigate', handleAryaNavigate);
+  }, [currentSection, isTransitioning]);
+
+
   const renderSection = () => {
     switch (displaySection) {
       case 'home': return <Home onNavigate={handleNavigation} />;

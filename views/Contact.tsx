@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
 
 const Contact: React.FC = () => {
-  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [formState, setFormState] = useState({ name: '', email: '', message: '', _gotcha: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    await new Promise(r => setTimeout(r, 2000));
-    setStatus('sent');
-    setFormState({ name: '', email: '', message: '' });
-    setTimeout(() => setStatus('idle'), 3000);
+
+    try {
+      const endpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT;
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formState)
+      });
+
+      if (response.ok) {
+        setStatus('sent');
+        setFormState({ name: '', email: '', message: '', _gotcha: '' });
+        // Return to normal state after a brief pause
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      setStatus('error');
+    }
   };
 
   return (
@@ -63,17 +82,30 @@ const Contact: React.FC = () => {
         <div className="glass-panel p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] border-white/10 shadow-2xl relative overflow-hidden bg-[#0a0a14]/60 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-secondaryPink/10 blur-3xl rounded-full" />
 
-          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 relative z-10">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 relative z-10" aria-live="polite">
+            {/* Honeypot field for spam prevention */}
+            <input 
+              type="text" 
+              name="_gotcha" 
+              style={{ display: 'none' }} 
+              value={formState._gotcha}
+              onChange={e => setFormState({ ...formState, _gotcha: e.target.value })}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               <div className="space-y-2 group">
                 <label className="text-[9px] font-black uppercase tracking-widest text-gray-600 ml-4">Subject Identity</label>
                 <input
                   required
                   type="text"
-                  placeholder="Your Name"
+                  name="name"
+                  placeholder="Visitor name"
                   className="w-full h-12 md:h-14 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-6 outline-none text-white focus:border-accentPink transition-all font-mono text-xs md:text-sm"
                   value={formState.name}
                   onChange={e => setFormState({ ...formState, name: e.target.value })}
+                  disabled={status === 'sending'}
                 />
               </div>
               <div className="space-y-2 group">
@@ -81,10 +113,12 @@ const Contact: React.FC = () => {
                 <input
                   required
                   type="email"
-                  placeholder="Your Email"
+                  name="email"
+                  placeholder="Visitor email"
                   className="w-full h-12 md:h-14 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-6 outline-none text-white focus:border-primaryPurple transition-all font-mono text-xs md:text-sm"
                   value={formState.email}
                   onChange={e => setFormState({ ...formState, email: e.target.value })}
+                  disabled={status === 'sending'}
                 />
               </div>
             </div>
@@ -93,35 +127,57 @@ const Contact: React.FC = () => {
               <label className="text-[9px] font-black uppercase tracking-widest text-gray-600 ml-4">Data Packet</label>
               <textarea
                 required
+                name="message"
+                minLength={10}
                 rows={4}
-                placeholder="Transmission Details..."
+                placeholder="Visitor message"
                 className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-6 outline-none text-white focus:border-accentGlow transition-all font-mono text-xs md:text-sm resize-none"
                 value={formState.message}
                 onChange={e => setFormState({ ...formState, message: e.target.value })}
+                disabled={status === 'sending'}
               />
             </div>
 
             <button
               type="submit"
-              disabled={status !== 'idle'}
-              className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-primaryPurple to-secondaryPink text-white font-black uppercase tracking-[0.2em] text-[10px] md:text-xs shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              disabled={status === 'sending'}
+              className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] md:text-xs shadow-xl transition-all ${
+                status === 'error' 
+                  ? 'bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500/30' 
+                  : 'bg-gradient-to-r from-primaryPurple to-secondaryPink text-white hover:scale-[1.02] active:scale-[0.98]'
+              } disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed`}
             >
-              {status === 'idle' && (
-                <span className="flex items-center justify-center gap-3">
-                  Transmit Link <i className="fa-solid fa-paper-plane text-xs md:text-sm"></i>
-                </span>
-              )}
-              {status === 'sending' && (
-                <span className="flex items-center justify-center gap-3">
-                  <i className="fa-solid fa-circle-notch animate-spin"></i> Encrypting...
-                </span>
-              )}
-              {status === 'sent' && (
-                <span className="flex items-center justify-center gap-3">
-                  <i className="fa-solid fa-check"></i> Link Synchronized
-                </span>
-              )}
+              {status === 'idle' && 'TRANSMIT LINK'}
+              {status === 'sending' && 'TRANSMITTING...'}
+              {status === 'sent' && '✓ TRANSMISSION RECEIVED'}
+              {status === 'error' && '⚠ TRANSMISSION FAILED'}
             </button>
+
+            {/* Terminal Status Output */}
+            {status !== 'idle' && (
+              <div className="mt-4 p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-[10px] text-gray-400 leading-relaxed text-left animate-fade-in-up">
+                {status === 'sending' && (
+                  <>
+                    <div className="animate-pulse">&gt; establishing communication link...</div>
+                    <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>&gt; transmitting data packet...<span className="inline-block w-1 h-3 ml-1 bg-white animate-pulse"></span></div>
+                  </>
+                )}
+                {status === 'sent' && (
+                  <>
+                    <div className="text-green-400">&gt; transmission acknowledged</div>
+                    <div className="text-green-400">&gt; message delivered successfully_</div>
+                  </>
+                )}
+                {status === 'error' && (
+                  <>
+                    <div className="text-red-400">&gt; connection interrupted</div>
+                    <div className="text-red-400">&gt; packet delivery failed</div>
+                    <div className="text-accentPink">&gt; please retry_</div>
+                  </>
+                )}
+              </div>
+            )}
+
           </form>
         </div>
       </div>

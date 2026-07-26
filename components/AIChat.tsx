@@ -1,342 +1,250 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
-import { SectionType } from '../types';
-
-// Add type definitions for Web Speech API
-declare global {
-  interface Window {
-    webkitSpeechRecognition: any;
-    SpeechRecognition: any;
-  }
-}
+import { motion, AnimatePresence } from 'framer-motion';
+import { processQuery, clearSession, AIResponse } from '../lib/aryaAI/engine';
+import { SectionType, Project } from '../types';
 
 interface AIChatProps {
   currentSection?: SectionType;
 }
 
+const suggestedPrompts = [
+  "What are Arya's best projects?",
+  "Show me AI/ML projects.",
+  "Which projects use Python?",
+  "Tell me about PM2.5."
+];
+
 const AIChat: React.FC<AIChatProps> = ({ currentSection = 'home' }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: "System Online. I am Arya's portfolio assistant. How can I help you today?" }
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; response: AIResponse }[]>([
+    { 
+      role: 'ai', 
+      response: { 
+        text: "Explore Arya's work through conversation.\n\nAsk about projects, AI/ML, software development, skills, achievements or experience." 
+      } 
+    }
   ]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-
+  const [isProcessing, setIsProcessing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
-
-  // Text-to-Speech Logic
-  const speak = (text: string) => {
-    if (isMuted || !window.speechSynthesis) return;
-
-    // Cancel any current speech
-    window.speechSynthesis.cancel();
-
-    // Strip markdown symbols and URLs for smoother speech
-    const cleanText = text
-      .replace(/!\[.*?\]\(.*?\)/g, 'I have generated an image for you.') // Replace images with text
-      .replace(/```[\s\S]*?```/g, 'Here is the code snippet you requested.') // Replace code blocks
-      .replace(/[*`#]/g, ''); // Remove formatting chars
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.pitch = 1;
-    utterance.rate = 1.1;
-
-    // Try to find a good English voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(v => v.name.includes('Google US English')) || voices.find(v => v.lang === 'en-US');
-    if (preferredVoice) utterance.voice = preferredVoice;
-
-    window.speechSynthesis.speak(utterance);
-  };
-
-  // Initialize Speech Recognition
-  useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-US';
-
-      recognitionRef.current.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(transcript);
-        handleSendMessage(transcript); // Auto-send on voice
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onerror = () => setIsListening(false);
-      recognitionRef.current.onend = () => setIsListening(false);
-    }
-  }, []);
-
-  const toggleListening = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current?.start();
-      setIsListening(true);
-    }
-  };
+  }, [messages, isProcessing]);
 
   const handleSendMessage = async (textOverride?: string) => {
-    const userMessage = textOverride || input.trim();
-    if (!userMessage || isLoading) return;
+    const query = textOverride || input.trim();
+    if (!query || isProcessing) return;
 
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-    setIsLoading(true);
+    setMessages(prev => [...prev, { role: 'user', response: { text: query } }]);
+    setIsProcessing(true);
 
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    // Simulate small processing delay for technical feel
+    setTimeout(() => {
+      const response = processQuery(query);
+      setMessages(prev => [...prev, { role: 'ai', response }]);
+      setIsProcessing(false);
+    }, 600);
+  };
 
-      // Context-Aware Prompt Construction
-      const contextPrompt = `
-        Current User Context: The user is currently viewing the "${currentSection}" section of the portfolio.
-        
-        System Instructions:
-        You are Arya's Advanced AI Assistant.
-        
-        1. **Context Awareness**: 
-           - If in 'Projects', mention details about EduNexus or CodeQuest.
-           - If in 'Contact', encourage using the form.
-           - If in 'Skills', discuss React, Flutter, or Python.
-           
-        2. **Capabilities**:
-           - **Images**: If the user asks for an image, a design, or a mockup, generate a markdown image link using Picsum. 
-             Format: \`![Description](https://picsum.photos/seed/{keyword}/400/300)\`. Replace {keyword} with a relevant term (e.g., tech, nature, code).
-           - **Code**: If asked for code, provide clean, commented snippets wrapped in standard markdown code blocks (\`\`\`).
-        
-        3. **Personality**:
-           - Keep responses concise (max 3 sentences) unless explaining code.
-           - Tone: Professional, futuristic, helpful.
-        
-        Arya's Info:
-        - Role: Frontend & Mobile Developer (Student).
-        - Tech: React, Flutter, Python, Tailwind, Supabase.
-      `;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [
-          { role: 'user', parts: [{ text: contextPrompt + "\n\nUser Query: " + userMessage }] }
-        ],
-      });
-
-      const aiResponse = response.text || "I'm having trouble accessing my database.";
-
-      setMessages(prev => [...prev, { role: 'ai', text: aiResponse }]);
-      speak(aiResponse);
-
-    } catch (error) {
-      console.error("Gemini Error:", error);
-      setMessages(prev => [...prev, { role: 'ai', text: "Connection interrupted. Please check your API key." }]);
-    } finally {
-      setIsLoading(false);
+  const handleAction = (action: 'navigate' | 'open_project' | 'open_link', payload: string) => {
+    if (action === 'navigate') {
+      window.dispatchEvent(new CustomEvent('arya-navigate', { detail: payload }));
+      if (window.innerWidth < 1024) setIsOpen(false); // Auto close on mobile
+    } else if (action === 'open_project') {
+      window.dispatchEvent(new CustomEvent('arya-navigate', { detail: 'projects' }));
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('open-project', { detail: payload }));
+      }, 500); // Give time for navigation transition
+      if (window.innerWidth < 1024) setIsOpen(false);
+    } else if (action === 'open_link') {
+      window.open(payload, '_blank');
     }
   };
 
-  // Helper to render message with Code Blocks and Images
-  const renderMessage = (text: string) => {
-    // Split by code blocks first
-    const parts = text.split(/(```[\s\S]*?```)/g);
-
-    return parts.map((part, index) => {
-      // Check if this part is a code block
-      if (part.startsWith('```') && part.endsWith('```')) {
-        const codeContent = part.replace(/```\w*\n?/, '').replace(/```$/, '');
-        return (
-          <div key={index} className="bg-black/50 p-3 rounded-lg my-2 overflow-x-auto border border-white/10 group relative">
-            <div className="absolute top-2 right-2 flex gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
-            </div>
-            <pre className="text-xs font-mono text-neonCyan pt-4">
-              <code>{codeContent.trim()}</code>
-            </pre>
-          </div>
-        );
-      }
-
-      // Process regular text for Markdown Images (![alt](url))
-      // We split regular text by image regex
-      const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
-      const textParts = part.split(imageRegex);
-
-      if (textParts.length > 1) {
-        const elements = [];
-        let lastIndex = 0;
-
-        // matchAll isn't fully supported in all TS configs, using simple exec loop or split logic
-        // A simpler way with split: 
-        // split results: [text, alt, url, text, alt, url, ...]
-        for (let i = 0; i < textParts.length; i += 3) {
-          // Push text
-          if (textParts[i]) elements.push(<span key={`text-${index}-${i}`}>{textParts[i]}</span>);
-
-          // Push Image if it exists
-          if (i + 2 < textParts.length) {
-            const alt = textParts[i + 1];
-            const url = textParts[i + 2];
-            elements.push(
-              <div key={`img-${index}-${i}`} className="my-3 rounded-xl overflow-hidden border border-white/20 shadow-lg">
-                <img src={url} alt={alt} className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" />
-                <div className="bg-black/40 p-1 text-[10px] text-center text-gray-400 font-mono">{alt}</div>
-              </div>
-            );
-          }
-        }
-        return <span key={index}>{elements}</span>;
-      }
-
-      return <span key={index}>{part}</span>;
-    });
-  };
+  const renderProjectCard = (project: Project) => (
+    <div key={project.id} className="mt-3 border border-white/10 bg-white/5 rounded-lg p-4 font-mono text-sm relative overflow-hidden group">
+      <div className="absolute top-0 left-0 w-1 h-full bg-accentPink"></div>
+      <div className="font-bold text-white mb-1 uppercase tracking-wider">{project.title}</div>
+      <div className="text-xs text-accentPink mb-3">{Array.isArray(project.category) ? project.category.join(' · ') : project.category}</div>
+      <div className="text-gray-400 text-xs mb-4 line-clamp-2">
+        {project.features[project.features.length - 1]}
+      </div>
+      <div className="flex gap-2">
+        <button 
+          onClick={() => handleAction('open_project', project.id)}
+          className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded transition-colors text-xs"
+        >
+          [ VIEW PROJECT ]
+        </button>
+        {project.githubLink !== '#' && (
+          <button 
+            onClick={() => handleAction('open_link', project.githubLink)}
+            className="px-3 py-1 bg-white/5 hover:bg-white/10 text-white rounded transition-colors text-xs"
+          >
+            [ GITHUB ]
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <>
-      {/* Floating Toggle Button - Moved down to match navbar alignment */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-4 sm:right-6 z-[70] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-neonPurple to-neonpink flex items-center justify-center shadow-lg shadow-neonCyan/20 transition-all duration-300 group border border-white/20 ${isOpen ? 'rotate-90 scale-0 opacity-0' : 'scale-100 opacity-100 hover:scale-110'}`}
-      >
-        <i className="fa-solid fa-robot text-xl text-white"></i>
+      {/* LAUNCHER */}
+      <AnimatePresence>
         {!isOpen && (
-          <span className="absolute -top-10 right-0 bg-black/80 backdrop-blur-md px-3 py-1 rounded-lg text-[10px] text-neonCyan font-bold uppercase tracking-widest border border-neonCyan/20 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            AI Assistant
-          </span>
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-14 h-14 bg-black/80 border border-white/10 rounded-full flex items-center justify-center backdrop-blur-md hover:border-accentPink transition-colors group z-50 shadow-[0_0_20px_rgba(139,92,246,0.15)] overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-primaryPurple/20 opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+            <span className="font-mono text-accentPink font-bold tracking-widest text-sm relative z-10">&gt;_</span>
+            
+            {/* Ping indicator */}
+            <span className="absolute top-0 right-0 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accentPink opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-accentPink"></span>
+            </span>
+          </motion.button>
         )}
-      </button>
+      </AnimatePresence>
 
-      {/* Chat Window - Adjusted Layout to prevent cutoff */}
-      {/* Used bottom-24 to sit above where the toggle button was, max-h ensures it fits on screen */}
-      <div
-        className={`fixed bottom-24 right-4 sm:right-6 z-[70] w-[calc(100vw-2rem)] sm:w-[400px] h-[550px] max-h-[calc(100vh-150px)] glass-panel rounded-3xl border-neonCyan/20 shadow-2xl flex flex-col overflow-hidden bg-[#0f172a]/95 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-90 opacity-0 translate-y-10 pointer-events-none'}`}
-      >
-        {/* Header */}
-        <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-neonCyan/10 flex items-center justify-center text-neonCyan border border-neonCyan/30 relative">
-              <i className="fa-solid fa-brain text-sm"></i>
-              {isListening && (
-                <span className="absolute inset-0 rounded-full border-2 border-neonCyan animate-ping"></span>
+      {/* CHAT WINDOW */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-0 lg:bottom-6 right-0 lg:right-10 w-full lg:w-[420px] h-[85vh] lg:h-[600px] max-h-[800px] bg-[#0a0a14]/95 backdrop-blur-xl border border-white/10 lg:rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
+          >
+            {/* HEADER */}
+            <div className="px-5 py-4 border-b border-white/10 flex justify-between items-start bg-black/40">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></span>
+                  <h3 className="font-mono font-bold tracking-widest text-white text-sm">ARYA.AI</h3>
+                </div>
+                <p className="text-[10px] text-gray-500 font-mono tracking-widest uppercase">Portfolio Intelligence Interface</p>
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => { clearSession(); setMessages([messages[0]]); }}
+                  className="text-gray-500 hover:text-white transition-colors text-xs font-mono"
+                  title="Clear Session"
+                >
+                  <i className="fa-solid fa-rotate-right"></i>
+                </button>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="text-gray-500 hover:text-white transition-colors text-xs"
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            {/* MESSAGES */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
+              {messages.map((msg, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                >
+                  <div className={`text-sm ${msg.role === 'user' ? 'text-gray-300 font-sans' : 'text-gray-300 font-mono'} whitespace-pre-wrap leading-relaxed max-w-[90%]`}>
+                    {msg.response.text}
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  {msg.response.actionButtons && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {msg.response.actionButtons.map((btn, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleAction(btn.action, btn.payload)}
+                          className="px-3 py-1.5 border border-primaryPurple/50 hover:bg-primaryPurple/20 text-accentPink text-[10px] font-mono tracking-widest uppercase rounded transition-colors"
+                        >
+                          {btn.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Project Cards */}
+                  {msg.response.projectCards && (
+                    <div className="w-full flex flex-col gap-2 mt-2">
+                      {msg.response.projectCards.map(renderProjectCard)}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+
+              {/* WELCOME SUGGESTIONS (only if just 1 message) */}
+              {messages.length === 1 && !isProcessing && (
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                  className="flex flex-wrap gap-2 pt-2"
+                >
+                  {suggestedPrompts.map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSendMessage(prompt)}
+                      className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-xs text-gray-400 hover:text-white transition-colors text-left"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* PROCESSING STATE */}
+              {isProcessing && (
+                <div className="flex flex-col items-start font-mono text-xs text-accentPink">
+                  <motion.div 
+                    animate={{ opacity: [1, 0, 1] }} 
+                    transition={{ repeat: Infinity, duration: 1 }}
+                  >
+                    &gt; ANALYSING PROJECT DATA...
+                  </motion.div>
+                </div>
               )}
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-white leading-none mb-1">Arya-Bot v2.0</h4>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-gray-400 font-mono">
-                  Context: <span className="text-neonPurple uppercase">{currentSection}</span>
-                </span>
+
+            {/* INPUT */}
+            <div className="p-4 bg-black/20 border-t border-white/5">
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-accentPink font-mono text-sm">&gt;</span>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Ask ARYA.AI..."
+                  className="w-full bg-black/40 border border-white/10 rounded-full py-3 pl-8 pr-12 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accentPink/50 transition-colors font-mono"
+                  disabled={isProcessing}
+                />
+                <button
+                  onClick={() => handleSendMessage()}
+                  disabled={!input.trim() || isProcessing}
+                  className="absolute right-3 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-accentPink disabled:opacity-50 transition-colors"
+                >
+                  <i className="fa-solid fa-paper-plane text-sm"></i>
+                </button>
               </div>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                window.speechSynthesis.cancel();
-                setIsMuted(!isMuted);
-              }}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isMuted ? 'text-gray-500 hover:text-white' : 'text-neonCyan bg-neonCyan/10'}`}
-              title={isMuted ? "Unmute Voice" : "Mute Voice"}
-            >
-              <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'} text-xs`}></i>
-            </button>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors border border-transparent hover:border-white/10"
-            >
-              <i className="fa-solid fa-xmark text-sm"></i>
-            </button>
-          </div>
-        </div>
-
-        {/* Messages Container */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent to-black/20">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
-              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                  ? 'bg-neonPurple/20 border border-neonPurple/30 text-white rounded-tr-none shadow-lg shadow-neonPurple/5'
-                  : 'bg-white/5 border border-white/10 text-gray-200 rounded-tl-none'
-                }`}>
-                {msg.role === 'ai' ? renderMessage(msg.text) : msg.text}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex justify-start animate-fade-in-up">
-              <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex gap-2 items-center">
-                <span className="text-[10px] text-gray-400 font-mono">Thinking</span>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-neonCyan rounded-full animate-bounce"></div>
-                  <div className="w-1 h-1 bg-neonCyan rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="w-1 h-1 bg-neonCyan rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                </div>
-              </div>
-            </div>
-          )}
-          {isListening && (
-            <div className="flex justify-end animate-fade-in-up">
-              <div className="bg-neonCyan/10 border border-neonCyan/30 px-4 py-2 rounded-2xl rounded-tr-none flex items-center gap-2">
-                <div className="w-2 h-2 bg-neonCyan rounded-full animate-pulse"></div>
-                <span className="text-xs text-neonCyan font-bold">Listening...</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Input Area */}
-        <div className="p-3 bg-white/5 border-t border-white/10 shrink-0">
-          <div className="relative flex gap-2">
-            <button
-              onClick={toggleListening}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${isListening
-                  ? 'bg-red-500/20 text-red-500 border-red-500/50 animate-pulse'
-                  : 'bg-white/5 text-gray-400 border-white/10 hover:text-neonCyan hover:border-neonCyan/30'
-                }`}
-              title="Speak"
-            >
-              <i className={`fa-solid ${isListening ? 'fa-microphone-lines' : 'fa-microphone'} text-sm`}></i>
-            </button>
-
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder={isListening ? "Listening..." : "Type or speak..."}
-              disabled={isListening}
-              className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-neonCyan/50 transition-colors disabled:opacity-50"
-            />
-
-            <button
-              onClick={() => handleSendMessage()}
-              disabled={isLoading || isListening}
-              className="w-10 h-10 rounded-xl bg-neonCyan/20 text-neonCyan flex items-center justify-center hover:bg-neonCyan hover:text-black transition-all disabled:opacity-50 border border-neonCyan/20"
-            >
-              <i className="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-          </div>
-          <div className="flex justify-between items-center mt-2 px-1">
-            <p className="text-[9px] text-gray-500 font-mono flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              Gemini-3 Flash • Voice Enabled
-            </p>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

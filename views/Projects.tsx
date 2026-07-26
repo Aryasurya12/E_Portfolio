@@ -2,197 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Project } from '../types';
 
-const projects: Project[] = [
-  {
-    id: 'SheSpeaks',
-    title: 'SheSpeaks',
-    category: 'IOT',
-    tags: ['Safety Tech', 'IoT', 'Web', 'Hackathon'],
-
-    description:
-      'A smart safety and incident-reporting system designed to capture critical evidence and trigger emergency alerts during unsafe situations.',
-
-    longDescription:
-      'SheSpeaks is a safety-focused hackathon project designed to make emergency reporting faster and more reliable. The concept combines a discreet trigger mechanism with automatic evidence collection, allowing the system to capture important information such as audio, video and location data when an emergency is detected or manually triggered. The project explores how software, connected devices and intelligent automation can work together to create a practical personal-safety ecosystem.',
-
-    features: [
-      'Emergency Incident Triggering',
-      'Audio, Video & Location Evidence Capture',
-      'Real-time Emergency Alert System',
-      'Privacy-focused Incident Reporting'
-    ],
-
-    image: '/projects/SheSpeaks/cover.png',
-
-    gallery: [
-      '/projects/SheSpeaksp/dashboard.png',
-      '/projects/SheSpeaks/reporting.png',
-      '/projects/SheSpeaks/architecture.png',
-      '/projects/SheSpeaks/prototype.png'
-    ],
-
-    githubLink: '#',
-    demoLink: '#'
-  },
-  {
-    id: 'e-portfolio',
-    title: 'ARYA.OS Portfolio',
-    category: 'WEB',
-    tags: ['React', 'TypeScript', 'Tailwind CSS', 'UI/UX'],
-
-    description:
-      'A futuristic developer portfolio designed to showcase my projects, skills and journey through an immersive digital experience.',
-
-    longDescription:
-      'ARYA.OS is my personal developer portfolio built as more than a traditional resume website. The interface follows a futuristic cyberpunk-inspired visual language with glassmorphism, responsive layouts and interactive project showcases. The portfolio acts as a central digital identity for presenting my work across software development, artificial intelligence and machine learning while also demonstrating my approach to frontend engineering and UI/UX design.',
-
-    features: [
-      'Futuristic Glassmorphism Interface',
-      'Interactive Project Showcase',
-      'Responsive Portfolio Experience',
-      'Custom ARYA.OS Design System'
-    ],
-
-    image: '/projects/portfolio/cover.png',
-
-    gallery: [
-      '/projects/portfolio/home.png',
-      '/projects/portfolio/projects.png',
-      '/projects/portfolio/project-modal.png',
-      '/projects/portfolio/skills.png'
-    ],
-
-    githubLink: 'https://github.com/Aryasurya12/E_Portfolio',
-    demoLink: '#'
-  },
-  {
-    id: 'zync',
-    title: 'ZYNC',
-    category: ['AI/ML'],
-    tags: ['EdTech', 'AI', 'TypeScript', 'Web'],
-
-    description:
-      'A next-generation educational platform exploring how AI can create smarter and more engaging learning experiences.',
-
-    longDescription:
-      'ZYNC is a next-generation educational platform designed to rethink the way students learn and teachers interact with digital education. The project combines modern web technologies with AI-driven capabilities to create a more intelligent, interactive and personalized learning environment. Rather than functioning as a conventional learning-management interface, ZYNC explores how intelligent systems can support students throughout their learning journey while providing a unified digital education experience.',
-
-    features: [
-      'AI-powered Learning Experience',
-      'Interactive Student Environment',
-      'Modern Educational Dashboard',
-      'Student & Teacher-focused Ecosystem'
-    ],
-
-    image: '/projects/zync/cover.png',
-
-    gallery: [
-      '/projects/zync/home.png',
-      '/projects/zync/student-dashboard.png',
-      '/projects/zync/learning.png',
-      '/projects/zync/ai-features.png',
-      '/projects/zync/teacher-dashboard.png'
-    ],
-
-    githubLink: 'https://github.com/Aryasurya12/ZYNC',
-    demoLink: '#'
-  },
-  {
-    id: 'krushit-ai',
-    title: 'Krushit — AI Smart Agriculture',
-    category: ['AI/ML', 'IOT'],
-    tags: ['AI/ML', 'Next.js', 'FastAPI', 'Supabase', 'TensorFlow'],
-
-    description:
-      'An AI-powered agriculture platform combining crop intelligence, disease detection, farmer assistance and data-driven farm management.',
-
-    longDescription:
-      'Krushit is an intelligent agriculture platform designed to help farmers make better data-driven decisions through AI and modern web technologies. The system includes a farmer-facing application and an administrative dashboard backed by Supabase. It combines crop and region-based intelligence with AI-assisted agricultural insights, while the broader architecture supports TensorFlow-based crop disease detection, FastAPI services, multilingual interaction and integration with real-time agricultural data. The project focuses on making advanced agricultural intelligence accessible through a simple digital platform.',
-
-    features: [
-      'AI-based Crop & Regional Insights',
-      'Crop Disease Detection using CNN',
-      'Farmer App & Administrative Dashboard',
-      'AI Agricultural Advisory System'
-    ],
-
-    image: '/projects/krushit/cover.png',
-
-    gallery: [
-      '/projects/krushit/farmer-dashboard.png',
-      '/projects/krushit/admin-dashboard.png',
-      '/projects/krushit/disease-detection.png',
-      '/projects/krushit/architecture.png',
-      '/projects/krushit/ai-assistant.png'
-    ],
-
-    githubLink: '#',
-    demoLink: '#'
-  },
-  {
-    id: 'spacescope',
-    title: 'SpaceScope',
-    category: 'WEB',
-    tags: ['SpaceTech', 'TypeScript', 'Data', 'Dashboard'],
-
-    description:
-      'A futuristic web dashboard that transforms raw space data into an accessible and visually engaging exploration experience.',
-
-    longDescription:
-      'SpaceScope is a futuristic web-based dashboard designed to make space exploration and astronomical information more accessible to everyday users. The project focuses on transforming raw space-related data into an intuitive visual experience through modern dashboard design and data presentation. SpaceScope demonstrates how complex scientific information can be organized and presented through an engaging, user-friendly web interface.',
-
-    features: [
-      'Space Data Visualization',
-      'Interactive Exploration Dashboard',
-      'Data-driven Web Experience',
-      'Futuristic Responsive Interface'
-    ],
-
-    image: '/projects/spacescope/cover.png',
-
-    gallery: [
-      '/projects/spacescope/home.png',
-      '/projects/spacescope/dashboard.png',
-      '/projects/spacescope/explore.png',
-      '/projects/spacescope/data-view.png'
-    ],
-
-    githubLink: 'https://github.com/Aryasurya12/SpaceScope',
-    demoLink: '#'
-  },
-  {
-    id: 'codequest',
-    title: 'CodeQuest',
-    category: 'AI/ML',
-    tags: ['Python', 'AI', 'EdTech', 'Gamification'],
-
-    description:
-      'A gamified Python learning platform that combines interactive coding challenges with AI-assisted learning.',
-
-    longDescription:
-      'CodeQuest is an interactive educational platform designed to make learning Python more engaging through gamification. Inspired by progression-based learning applications such as Duolingo, the project transforms programming concepts into a structured and interactive learning journey. Learners progress through coding activities while AI-assisted features provide additional support, creating an experience that combines programming education, gamification and intelligent assistance.',
-
-    features: [
-      'Gamified Python Learning',
-      'Interactive Coding Challenges',
-      'AI-assisted Learning Support',
-      'Progress-based Learning Experience'
-    ],
-
-    image: '/projects/codequest/cover.png',
-
-    gallery: [
-      '/projects/codequest/home.png',
-      '/projects/codequest/lesson.png',
-      '/projects/codequest/challenge.png',
-      '/projects/codequest/ai-assistant.png',
-      '/projects/codequest/progress.png'
-    ],
-
-    githubLink: 'https://github.com/Aryasurya12/CodeQuest',
-    demoLink: '#'
-  },
-];
+import { projects } from '../data/projects';
 
 type CategoryType = 'ALL' | 'AI/ML' | 'SOFTWARE' | 'WEB' | 'IOT';
 
@@ -361,10 +171,27 @@ const ProjectCard: React.FC<{
 
 const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [filter, setFilter] = useState<CategoryType>('ALL');
   const [isAnimating, setIsAnimating] = useState(false);
   const filterContainerRef = useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({});
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [selectedProject]);
+
+  useEffect(() => {
+    const handleOpenProject = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        const p = projects.find(proj => proj.id === customEvent.detail);
+        if (p) setSelectedProject(p);
+      }
+    };
+    window.addEventListener('open-project', handleOpenProject);
+    return () => window.removeEventListener('open-project', handleOpenProject);
+  }, []);
 
   const handleFilterChange = (category: CategoryType, e: React.MouseEvent) => {
     if (filter === category) return;
@@ -447,9 +274,50 @@ const Projects: React.FC = () => {
               <i className="fa-solid fa-xmark text-xl"></i>
             </button>
 
-            <div className="w-full md:w-[50%] h-64 md:h-auto shrink-0 relative">
-              <img src={selectedProject.image} className="w-full h-full object-cover" alt={selectedProject.title} />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent md:hidden" />
+            <div className="w-full md:w-[50%] h-64 md:h-auto shrink-0 relative bg-[#05050a] flex items-center justify-center group">
+              <img 
+                src={selectedProject.gallery && selectedProject.gallery.length > 0 ? selectedProject.gallery[activeImageIndex] : selectedProject.image} 
+                className="w-full h-full object-contain p-4 md:p-8" 
+                alt={selectedProject.title} 
+              />
+              
+              {selectedProject.gallery && selectedProject.gallery.length > 1 && (
+                <>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveImageIndex(prev => prev === 0 ? selectedProject.gallery!.length - 1 : prev - 1);
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-white/10 hover:bg-white/20 z-10"
+                  >
+                    <i className="fa-solid fa-chevron-left"></i>
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveImageIndex(prev => prev === selectedProject.gallery!.length - 1 ? 0 : prev + 1);
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-white/10 hover:bg-white/20 z-10"
+                  >
+                    <i className="fa-solid fa-chevron-right"></i>
+                  </button>
+                  
+                  {/* Indicators */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    {selectedProject.gallery.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex(idx);
+                        }}
+                        className={`h-2 rounded-full transition-all duration-300 ${idx === activeImageIndex ? 'bg-accentPink w-6' : 'bg-white/30 w-2 hover:bg-white/50'}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent md:hidden pointer-events-none" />
             </div>
 
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -482,8 +350,8 @@ const Projects: React.FC = () => {
               </div>
 
               <div className="p-8 border-t border-white/5 bg-[#0a0a14]/80 backdrop-blur-xl flex gap-4">
-                <a href={selectedProject.githubLink} className="flex-1 py-4 rounded-xl bg-white/5 border border-white/10 text-center text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">Source</a>
-                <a href={selectedProject.demoLink} className="flex-1 py-4 rounded-xl bg-gradient-to-r from-primaryPurple to-secondaryPink text-center text-[10px] font-black uppercase tracking-widest text-white shadow-lg transition-all hover:scale-105">Launch</a>
+                <a href={selectedProject.githubLink} target="_blank" rel="noopener noreferrer" className="flex-1 py-4 rounded-xl bg-white/5 border border-white/10 text-center text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">Source</a>
+                <a href={selectedProject.demoLink} target="_blank" rel="noopener noreferrer" className="flex-1 py-4 rounded-xl bg-gradient-to-r from-primaryPurple to-secondaryPink text-center text-[10px] font-black uppercase tracking-widest text-white shadow-lg transition-all hover:scale-105">Launch</a>
               </div>
             </div>
           </div>

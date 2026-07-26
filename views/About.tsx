@@ -129,7 +129,7 @@ const About: React.FC = () => {
               style={!isMobile ? { rotateX: mouseY, rotateY: mouseX } : {}}
               className="relative w-full aspect-[4/5] md:aspect-square rounded-[3rem] border border-white/10 bg-white/[0.02] overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.1)]"
             >
-              <img src="/profile.png" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 scale-105 group-hover:scale-100" alt="Arya" />
+              <img src="/Assests/Profile/Profile_pic.png" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 scale-105 group-hover:scale-100" alt="Arya" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/40 to-transparent opacity-90" />
 
               {/* Floating UI Overlays */}

@@ -337,7 +337,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           >
             {/* Profile Photo Wrapper */}
             <div className="w-full h-full rounded-[1.8rem] overflow-hidden relative bg-[#0a0a14]/90 backdrop-blur-2xl">
-              <img src="/profile.png" alt="Arya Profile" className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.15]" />
+              <img src="/Assests/Profile/Profile_pic.png" alt="Arya Profile" className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.15]" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14]/80 via-transparent to-transparent" />
             </div>
 
