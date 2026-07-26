@@ -8,18 +8,60 @@ import Skills from './views/Skills';
 import Competitions from './views/Competitions';
 import About from './views/About';
 import Contact from './views/Contact';
+import NotFound from './views/NotFound';
 import Loader from './components/Loader';
 import CustomCursor from './components/CustomCursor';
 import { SectionType } from './types';
 const App: React.FC = () => {
   const [showLoader, setShowLoader] = useState(true);
   const [isAppReady, setIsAppReady] = useState(false);
-  const [currentSection, setCurrentSection] = useState<SectionType>('home');
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [displaySection, setDisplaySection] = useState<SectionType>('home');
 
-  const handleNavigation = (section: SectionType) => {
+  const getInitialSection = (): SectionType => {
+    if (typeof window === 'undefined') return 'home';
+    const path = window.location.pathname.toLowerCase();
+    if (path === '/' || path === '') return 'home';
+    const section = path.substring(1);
+    const validSections: SectionType[] = ['home', 'projects', 'skills', 'competitions', 'about', 'contact'];
+    if (validSections.includes(section as SectionType)) {
+      return section as SectionType;
+    }
+    return 'not-found';
+  };
+
+  const initialSection = getInitialSection();
+  const [currentSection, setCurrentSection] = useState<SectionType>(initialSection);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [displaySection, setDisplaySection] = useState<SectionType>(initialSection);
+
+  // Dynamic SEO Title Update
+  useEffect(() => {
+    const titles: Record<SectionType, string> = {
+      'home': 'Arya Suryavanshi | Developer & AI/ML Explorer',
+      'about': 'About | Arya Suryavanshi',
+      'projects': 'Projects | Arya Suryavanshi',
+      'skills': 'Skills | Arya Suryavanshi',
+      'competitions': 'Achievements | Arya Suryavanshi',
+      'contact': 'Contact | Arya Suryavanshi',
+      'not-found': '404 - Sector Not Found | Arya Suryavanshi'
+    };
+    document.title = titles[displaySection] || titles['home'];
+  }, [displaySection]);
+
+  // Handle Browser Back/Forward
+  useEffect(() => {
+    const handlePopState = () => {
+      handleNavigation(getInitialSection(), true);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleNavigation = (section: SectionType, isPopState = false) => {
     if (section === currentSection || isTransitioning) return;
+
+    if (!isPopState) {
+      window.history.pushState(null, '', `/${section === 'home' ? '' : section}`);
+    }
 
     // Phase 1: Fade out current section
     setIsTransitioning(true);
@@ -58,11 +100,12 @@ const App: React.FC = () => {
     switch (displaySection) {
       case 'home': return <Home onNavigate={handleNavigation} />;
       case 'projects': return <Projects />;
-      case 'competitions': return <Competitions />;
       case 'skills': return <Skills />;
+      case 'competitions': return <Competitions />;
       case 'about': return <About />;
       case 'contact': return <Contact />;
-      default: return <Home onNavigate={handleNavigation} />;
+      case 'not-found': return <NotFound onNavigate={handleNavigation} />;
+      default: return <NotFound onNavigate={handleNavigation} />;
     }
   };
 
